@@ -8,7 +8,7 @@ from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from bot.db.database import Base
-from bot.models import User, SymptomEntry  # noqa: F401 — register models
+import bot.models  # noqa: F401 — register every model in Base.metadata
 from bot.config import get_settings
 
 config = context.config
@@ -18,9 +18,12 @@ if config.config_file_name is not None:
 
 target_metadata = Base.metadata
 
-# Override sqlalchemy.url from settings if available
-settings = get_settings()
-config.set_main_option("sqlalchemy.url", settings.database_url)
+# Пароль базы не хранится в alembic.ini: строка подключения берётся из
+# окружения. Если бот уже открыл соединение и запускает миграции сам,
+# оно приходит через config.attributes.
+if config.attributes.get("connection") is None:
+    settings = get_settings()
+    config.set_main_option("sqlalchemy.url", settings.database_url)
 
 
 def run_migrations_offline() -> None:
@@ -56,6 +59,11 @@ async def run_async_migrations() -> None:
 
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
+    connection = config.attributes.get("connection")
+    if connection is not None:
+        # Соединение передал бот при старте — свой движок не поднимаем.
+        do_run_migrations(connection)
+        return
     asyncio.run(run_async_migrations())
 
 

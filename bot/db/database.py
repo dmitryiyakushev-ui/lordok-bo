@@ -1,6 +1,7 @@
 """Database initialization and session management."""
 
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import (
@@ -23,8 +24,19 @@ _engine = None
 _async_session_maker = None
 
 
+def _run_migrations(connection) -> None:
+    """Прогнать alembic на уже открытом соединении."""
+    from alembic import command
+    from alembic.config import Config
+
+    ini_path = Path(__file__).resolve().parents[2] / "alembic.ini"
+    cfg = Config(str(ini_path))
+    cfg.attributes["connection"] = connection
+    command.upgrade(cfg, "head")
+
+
 async def init_db() -> None:
-    """Initialize database connection and create tables."""
+    """Initialize database connection and bring the schema up to date."""
     global _engine, _async_session_maker
 
     settings = get_settings()
@@ -43,15 +55,10 @@ async def init_db() -> None:
         expire_on_commit=False,
     )
 
-    # Ensure all models are imported before create_all() so their tables register
-    import bot.models  # noqa: F401
-
+    # Схема живёт в alembic: одна точка правды вместо create_all плюс
+    # самописных ALTER TABLE при старте.
     async with _engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-    # Apply runtime migrations (column additions, legacy backfill)
-    from bot.db.runtime_migrations import run_runtime_migrations
-    await run_runtime_migrations(_engine)
+        await conn.run_sync(_run_migrations)
 
 
 async def close_db() -> None:

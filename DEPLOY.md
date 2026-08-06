@@ -97,11 +97,22 @@ docker compose ps
 
 ---
 
-## 7. Создать таблицы в базе данных
+## 7. Таблицы в базе данных
+
+Отдельного шага не требуется: при старте бот сам прогоняет миграции
+alembic до последней ревизии. Старая база при этом дополняется
+недостающими колонками, пустая создаётся с нуля.
+
+Посмотреть, на какой ревизии сейчас база:
 
 ```bash
-docker compose exec bot alembic revision --autogenerate -m "Initial tables"
-docker compose exec bot alembic upgrade head
+docker compose exec bot alembic current
+```
+
+Новое изменение схемы (после правки моделей):
+
+```bash
+docker compose exec bot alembic revision --autogenerate -m "Что поменяли"
 ```
 
 ---
