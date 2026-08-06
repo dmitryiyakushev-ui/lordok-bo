@@ -140,6 +140,9 @@ BOT_COMMANDS = [
     BotCommand(command="change_condition", description="Изменить жалобу/диагноз"),
     BotCommand(command="cancel", description="Отменить текущее действие"),
     BotCommand(command="help", description="Справка"),
+    BotCommand(command="privacy", description="🔒 Мои данные и согласие"),
+    BotCommand(command="my_data", description="Выгрузить мои данные"),
+    BotCommand(command="delete_me", description="Удалить данные и отозвать согласие"),
     BotCommand(command="reset", description="Пересоздать профиль"),
 ]
 
@@ -230,6 +233,7 @@ async def main() -> None:
         from bot.handlers.menu import router as menu_router
         from bot.handlers.feedback import router as feedback_router
         from bot.handlers.admin import router as admin_router
+        from bot.handlers.privacy import router as privacy_router
         from bot.handlers.start import router as start_router
         from bot.handlers.log import router as log_router
         from bot.handlers.history import router as history_router
@@ -240,6 +244,7 @@ async def main() -> None:
         dp.include_router(menu_router)
         dp.include_router(admin_router)     # before FSM routers
         dp.include_router(feedback_router)  # before FSM routers
+        dp.include_router(privacy_router)   # before FSM routers
         dp.include_router(start_router)
         dp.include_router(log_router)
         dp.include_router(patients_router)

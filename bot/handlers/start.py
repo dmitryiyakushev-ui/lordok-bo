@@ -75,6 +75,53 @@ def parse_source(payload: str | None) -> str:
 # Base URL for legal documents (update when domain is configured)
 SITE_URL = "http://5.42.101.251"
 
+# Редакция политики и соглашения, под которой пользователь ставит галочку.
+# Меняется вместе с текстом документов на сайте: тогда бот попросит
+# согласие заново.
+CONSENT_VERSION = "2026-04-18"
+
+CONSENT_TEXT = (
+    "👋 Добро пожаловать в ЛОРдок.\n\n"
+    "Я помогаю отслеживать ЛОР-симптомы, ваши или ваших детей, и "
+    "подсказываю, когда пора к врачу.\n\n"
+    "🩺 Бот сделан практикующим оториноларингологом Якушевым Дмитрием.\n"
+    "⚠️ Диагнозов не ставит и врача не заменяет.\n\n"
+    "Прежде чем начать, нужно ваше согласие. Что и зачем я собираю:\n"
+    "• ФИО и телефон, чтобы подписать отчёт для врача и восстановить доступ;\n"
+    "• пол, возраст, диагноз и ежедневные симптомы, чтобы оценивать динамику;\n"
+    "• данные ребёнка, если вы ведёте дневник за него.\n\n"
+    "Симптомы и диагнозы это данные о здоровье, то есть специальная "
+    "категория персональных данных. Отмечая согласие, вы разрешаете их "
+    "обработку на условиях Политики, а за ребёнка подтверждаете, что "
+    "действуете как его законный представитель.\n\n"
+    "Согласие можно отозвать в любой момент командой /delete_me: профиль "
+    "и все записи будут удалены."
+)
+
+
+def consent_keyboard() -> InlineKeyboardMarkup:
+    """Согласие + ссылки на документы."""
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text="📄 Политика конфиденциальности",
+                url=f"{SITE_URL}/privacy.html",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="📋 Пользовательское соглашение",
+                url=f"{SITE_URL}/terms.html",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="✅ Согласен, продолжить",
+                callback_data="consent:accept",
+            ),
+        ],
+    ])
+
 
 COMPLAINT_TO_NOSOLOGY = {
     "nose": "undiagnosed_nose",
@@ -91,6 +138,7 @@ COMPLAINT_TO_NOSOLOGY = {
 
 
 class OnboardingState(StatesGroup):
+    awaiting_consent = State()
     awaiting_name = State()
     awaiting_phone = State()
     awaiting_phone_manual = State()
@@ -144,6 +192,17 @@ async def cmd_start(message: Message, command: CommandObject, state: FSMContext)
     )
     await state.update_data(source=source)
 
+    # Consent gate: nothing is collected until the user taps "Согласен".
+    if user is None or user.consent_at is None:
+        await message.answer(CONSENT_TEXT, reply_markup=consent_keyboard())
+        await state.set_state(OnboardingState.awaiting_consent)
+        return
+
+    await _route_after_consent(message, state, user)
+
+
+async def _route_after_consent(message: Message, state: FSMContext, user: User | None):
+    """Send the user to the branch that matches their profile."""
     # Existing user with completed new-style profile
     if user and user.full_name and user.phone:
         await message.answer(
@@ -167,34 +226,60 @@ async def cmd_start(message: Message, command: CommandObject, state: FSMContext)
         return
 
     # New user
-    legal_kb = InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(
-                text="📄 Политика конфиденциальности",
-                url=f"{SITE_URL}/privacy.html",
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="📋 Пользовательское соглашение",
-                url=f"{SITE_URL}/terms.html",
-            ),
-        ],
-    ])
     await message.answer(
-        "👋 Добро пожаловать в ЛОРдок!\n\n"
-        "Я помогу отслеживать ЛОР-симптомы — ваши или ваших детей — "
-        "и подскажу, когда пора к врачу.\n\n"
-        "🩺 Создан практикующим оториноларингологом Якушевым Дмитрием.\n"
-        "⚠️ Не ставит диагнозы и не заменяет врача.\n"
-        "⚠️ Имеются противопоказания, необходима консультация специалиста.\n\n"
-        "Продолжая использование бота, вы соглашаетесь с Политикой "
-        "конфиденциальности и Пользовательским соглашением (ссылки ниже).\n\n"
         "Чтобы начать, представьтесь, пожалуйста. "
-        "Введите ваше ФИО одной строкой.",
-        reply_markup=legal_kb,
+        "Введите ваше ФИО одной строкой."
     )
     await state.set_state(OnboardingState.awaiting_name)
+
+
+@router.callback_query(
+    OnboardingState.awaiting_consent, F.data == "consent:accept"
+)
+async def handle_consent(callback: CallbackQuery, state: FSMContext):
+    """Record the consent and continue onboarding."""
+    user_id = callback.from_user.id
+    data = await state.get_data()
+    source = data.get("source", SOURCE_DIRECT)
+    now = datetime.now(timezone.utc)
+
+    async with get_session() as session:
+        user = await session.get(User, user_id)
+        if user is None:
+            user = User(
+                id=user_id,
+                username=callback.from_user.username,
+                first_name=callback.from_user.first_name or "Пользователь",
+                language_code="ru",
+                source=None if source == SOURCE_DIRECT else source,
+                created_at=now,
+                updated_at=now,
+            )
+            session.add(user)
+        user.consent_version = CONSENT_VERSION
+        user.consent_at = now
+        user.updated_at = now
+        await session.commit()
+        await session.refresh(user)
+        consented_user = user
+
+    await log_event(
+        user_id=user_id,
+        event_type="consent_accepted",
+        detail=CONSENT_VERSION,
+    )
+
+    await callback.message.edit_reply_markup(reply_markup=None)
+    await callback.answer("Согласие записано")
+    await _route_after_consent(callback.message, state, consented_user)
+
+
+@router.message(OnboardingState.awaiting_consent)
+async def handle_consent_pending(message: Message):
+    """Пока согласия нет, дальше не идём."""
+    await message.answer(
+        "Чтобы продолжить, нажмите «✅ Согласен, продолжить» в сообщении выше."
+    )
 
 
 # ──────────────────────────────────────────────────────────────────────

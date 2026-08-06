@@ -43,6 +43,14 @@ class User(Base):
     # (t.me/<bot>?start=<source>). Written once, never overwritten.
     source: Mapped[str | None] = mapped_column(String(64), nullable=True)
 
+    # Consent to personal data processing (152-ФЗ). Health data is a
+    # special category, so the acceptance itself has to be recorded:
+    # which document version, and when.
+    consent_version: Mapped[str | None] = mapped_column(String(16), nullable=True)
+    consent_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
     # Active patient pointer — which patient /log, /history, /report work with
     active_patient_id: Mapped[int | None] = mapped_column(
         Integer,

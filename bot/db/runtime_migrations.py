@@ -80,6 +80,10 @@ async def run_runtime_migrations(engine: AsyncEngine) -> None:
         # ── users: acquisition source (deep-link payload) ──
         await _add_column_if_missing(conn, "users", "source", "VARCHAR(64)")
 
+        # ── users: consent to personal data processing ──
+        await _add_column_if_missing(conn, "users", "consent_version", "VARCHAR(16)")
+        await _add_column_if_missing(conn, "users", "consent_at", "TIMESTAMPTZ")
+
         # ── users: timezone ──
         await _add_column_if_missing(
             conn, "users", "user_tz", "VARCHAR(50) DEFAULT 'Europe/Moscow'"
