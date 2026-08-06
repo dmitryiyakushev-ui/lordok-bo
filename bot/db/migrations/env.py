@@ -13,7 +13,10 @@ from bot.config import get_settings
 
 config = context.config
 
-if config.config_file_name is not None:
+# alembic.ini переопределяет настройки logging целиком. Когда миграции
+# запускает сам бот при старте, это гасит его собственные логи до
+# WARNING, поэтому в этом режиме конфиг логов не трогаем.
+if config.config_file_name is not None and config.attributes.get("connection") is None:
     fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
