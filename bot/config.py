@@ -39,6 +39,9 @@ class Settings(BaseSettings):
         "env_file_encoding": "utf-8",
         "case_sensitive": False,
         "populate_by_name": True,
+        # В .env лежат и переменные для docker-compose (пароли базы и
+        # redis). Боту они не нужны, но падать из-за них он не должен.
+        "extra": "ignore",
     }
 
 
