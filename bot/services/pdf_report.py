@@ -340,6 +340,7 @@ async def generate_pdf_report(
     scale_scores: list[dict] | None = None,
     episodes: list[dict] | None = None,
     recommendations: list[str] | None = None,
+    full: bool = True,
 ) -> bytes:
     """
     Generate a PDF symptom report.
@@ -362,6 +363,11 @@ async def generate_pdf_report(
               notes (str).
     recommendations : list of str, optional
         Clinical criteria-based recommendations for the physician.
+    full : bool
+        Полный отчёт или бесплатная сводка. В сокращённой версии
+        остаются даты, баллы, оценки триажа и красные флаги, то есть
+        всё, что относится к безопасности. Убираются график динамики,
+        детализация по симптомам, шкалы, эпизоды и блок рекомендаций.
 
     Returns
     -------
@@ -417,7 +423,7 @@ async def generate_pdf_report(
     story.append(HRFlowable(width="100%", thickness=0.5, color=COLOR_MED_BLUE))
 
     # ── Trend chart ─────────────────────────────────────────
-    if entries:
+    if entries and full:
         story.append(Paragraph("Динамика симптомов", styles["SectionHeader"]))
         chart_png = _generate_trend_chart(
             entries, user_data.get("nosology", ""), period_days=period_days
@@ -481,7 +487,7 @@ async def generate_pdf_report(
         story.append(t)
 
     # ── Detailed symptom entries ──────────────────────────────
-    if entries:
+    if entries and full:
         story.append(Paragraph("Детализация записей", styles["SectionHeader"]))
 
         entries_sorted_detail = sorted(entries, key=lambda e: e["recorded_at"])
@@ -622,7 +628,7 @@ async def generate_pdf_report(
         story.append(Paragraph(result_text, styles["BodyRu"]))
 
     # ── Scale scores (Centor, FeverPAIN, etc.) ──────────────
-    if scale_scores:
+    if scale_scores and full:
         story.append(Paragraph("Валидированные шкалы", styles["SectionHeader"]))
 
         SCALE_LABELS = {
@@ -661,7 +667,7 @@ async def generate_pdf_report(
         story.append(sc_table)
 
     # ── Episodes ───────────────────────────────────────────
-    if episodes:
+    if episodes and full:
         story.append(Paragraph("Зарегистрированные эпизоды", styles["SectionHeader"]))
 
         EPISODE_TYPE_LABELS = {
@@ -697,7 +703,7 @@ async def generate_pdf_report(
         story.append(ep_table)
 
     # ── Recommendations ────────────────────────────────────
-    if recommendations:
+    if recommendations and full:
         story.append(Paragraph("Рекомендации врачу", styles["SectionHeader"]))
         story.append(Paragraph(
             "На основе кумулятивных данных пациента и международных "
@@ -711,6 +717,18 @@ async def generate_pdf_report(
                 styles["BodyRu"],
             ))
             story.append(Spacer(1, 1.5 * mm))
+
+    # ── Что осталось за пределами бесплатной версии ─────────
+    if not full:
+        story.append(Spacer(1, 6 * mm))
+        story.append(HRFlowable(width="100%", thickness=0.3, color=COLOR_MED_BLUE))
+        story.append(Paragraph(
+            "Это сводка за 7 дней. В полной версии отчёта есть график "
+            "динамики симптомов, детализация по каждому симптому, "
+            "валидированные шкалы, учёт эпизодов и блок рекомендаций "
+            "для врача.",
+            styles["Disclaimer"],
+        ))
 
     # ── Disclaimer ──────────────────────────────────────────
     story.append(Spacer(1, 10 * mm))

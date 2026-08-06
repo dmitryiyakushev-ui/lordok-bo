@@ -23,10 +23,14 @@ from bot.services.episodes import (
     aom_tube_criteria_met,
     crs_surgery_criteria_met,
 )
+from bot.services.analytics import log_event
 from bot.utils.demographics import derive_age_group
 
 logger = logging.getLogger(__name__)
 router = Router()
+
+# Глубина отчёта в бесплатной версии.
+FREE_PERIOD_DAYS = 7
 
 
 class ReportState(StatesGroup):
@@ -49,12 +53,44 @@ async def cmd_report(message: Message, state: FSMContext):
                 reply_markup=main_menu_keyboard(),
             )
             return
+        is_premium = bool(user.is_premium)
 
     await message.answer(
         "📄 Выберите период для отчёта:",
-        reply_markup=report_period_keyboard(),
+        reply_markup=report_period_keyboard(is_premium),
     )
     await state.set_state(ReportState.choosing_period)
+
+
+@router.callback_query(
+    ReportState.choosing_period, F.data.startswith("report_locked:")
+)
+async def handle_locked_period(callback: CallbackQuery, state: FSMContext):
+    """Нажатие на закрытый период: объясняем, что в полной версии."""
+    period_days = callback.data.split(":")[1]
+
+    await log_event(
+        user_id=callback.from_user.id,
+        event_type="premium_wall",
+        detail=f"report_{period_days}d",
+    )
+
+    await callback.message.answer(
+        "🔒 Отчёт за этот период входит в полную версию.\n\n"
+        "Бесплатно доступна сводка за 7 дней: даты, баллы, оценки и "
+        "красные флаги.\n\n"
+        "В полной версии добавляются:\n"
+        "• любой период, а не только неделя;\n"
+        "• график динамики симптомов;\n"
+        "• детализация по каждому симптому;\n"
+        "• шкалы (Centor, FeverPAIN, SNOT-22) и учёт эпизодов;\n"
+        "• блок с рекомендациями для врача.\n\n"
+        "Полная версия ещё не запущена. Нажмите «⭐ Премиум» в меню, "
+        "чтобы мы позвали вас первым.",
+        reply_markup=main_menu_keyboard(),
+    )
+    await state.clear()
+    await callback.answer()
 
 
 @router.callback_query(
@@ -80,6 +116,12 @@ async def handle_period_selection(callback: CallbackQuery, state: FSMContext):
             await state.clear()
             await callback.answer()
             return
+
+        is_premium = bool(user.is_premium)
+        if not is_premium:
+            # Старое сообщение с кнопкой длинного периода не должно
+            # открывать полный отчёт.
+            period_days = min(period_days, FREE_PERIOD_DAYS)
 
         cutoff = datetime.now(timezone.utc) - timedelta(days=period_days)
 
@@ -217,6 +259,7 @@ async def handle_period_selection(callback: CallbackQuery, state: FSMContext):
             scale_scores=scale_dicts,
             episodes=episode_dicts,
             recommendations=recommendations,
+            full=is_premium,
         )
 
         doc = BufferedInputFile(

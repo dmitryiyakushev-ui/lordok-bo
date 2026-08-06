@@ -315,13 +315,29 @@ def reminder_time_keyboard() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
-def report_period_keyboard() -> InlineKeyboardMarkup:
-    """Report period selection keyboard."""
-    buttons = [
-        [InlineKeyboardButton(text="7 дней", callback_data="report:7")],
-        [InlineKeyboardButton(text="14 дней", callback_data="report:14")],
-        [InlineKeyboardButton(text="30 дней", callback_data="report:30")],
-    ]
+def report_period_keyboard(is_premium: bool = True) -> InlineKeyboardMarkup:
+    """Report period selection keyboard.
+
+    Бесплатная версия отдаёт отчёт за 7 дней. Длинные периоды видны, но
+    закрыты: так понятно, что за ними есть, и нажатия на замок можно
+    считать как спрос.
+    """
+    if is_premium:
+        buttons = [
+            [InlineKeyboardButton(text="7 дней", callback_data="report:7")],
+            [InlineKeyboardButton(text="14 дней", callback_data="report:14")],
+            [InlineKeyboardButton(text="30 дней", callback_data="report:30")],
+        ]
+    else:
+        buttons = [
+            [InlineKeyboardButton(text="7 дней", callback_data="report:7")],
+            [InlineKeyboardButton(
+                text="🔒 14 дней", callback_data="report_locked:14"
+            )],
+            [InlineKeyboardButton(
+                text="🔒 30 дней с графиками", callback_data="report_locked:30"
+            )],
+        ]
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
