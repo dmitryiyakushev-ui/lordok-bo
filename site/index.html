@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ЛОРдок — контроль симптомов ЛОР-заболеваний</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,500&display=swap" rel="stylesheet" />
+  <style>
+    /* ══════════════════════════════════════════
+       ЛОРдок Landing — Editorial Medical
+       Palette: Navy / Blue / Cream / Coral dot
+       ══════════════════════════════════════════ */
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:       #1F3864;
+      --blue:       #2E75B6;
+      --blue-light: #D6E4F0;
+      --cream:      #F8FAFC;
+      --coral:      #E07A5F;
+      --coral-soft: #F4C4B4;
+      --amber:      #E9A23B;
+      --white:      #FFFFFF;
+      --text-dark:  #1A2744;
+      --text-body:  #3B4A63;
+      --text-muted: #7A8BA5;
+      --bg-warm:    #FAF8F5;
+      --bg-section: #F3F0EB;
+      --radius:     14px;
+      --radius-sm:  8px;
+      --shadow-sm:  0 2px 8px rgba(31,56,100,.06);
+      --shadow-md:  0 8px 32px rgba(31,56,100,.08);
+      --shadow-lg:  0 16px 64px rgba(31,56,100,.12);
+      --font:       'Manrope', sans-serif;
+      --font-serif: 'Playfair Display', Georgia, serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      color: var(--text-body);
+      background: var(--bg-warm);
+      line-height: 1.65;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--blue); text-decoration: none; transition: color .2s; }
+    a:hover { color: var(--navy); }
+    img { max-width: 100%; display: block; }
+
+    /* ── Grain overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 9999;
+      pointer-events: none;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px;
+    }
+
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+    .reveal-delay-4 { transition-delay: .4s; }
+
+    /* ── Layout ── */
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+    section { padding: 100px 0; }
+
+    /* ── Coral dot motif ── */
+    .coral-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      background: var(--coral);
+      border-radius: 50%;
+      margin-left: 4px;
+      vertical-align: super;
+    }
+    .coral-dot-lg {
+      width: 12px; height: 12px;
+    }
+
+    /* ══════════════════════════
+       NAV
+       ══════════════════════════ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: rgba(250,248,245,.88);
+      backdrop-filter: blur(20px) saturate(1.4);
+      -webkit-backdrop-filter: blur(20px) saturate(1.4);
+      border-bottom: 1px solid rgba(31,56,100,.06);
+      transition: box-shadow .3s;
+    }
+    nav.scrolled { box-shadow: 0 4px 24px rgba(31,56,100,.08); }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 28px; max-width: 1120px; margin: 0 auto;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .nav-logo {
+      width: 38px; height: 38px; border-radius: 10px;
+    }
+    .nav-wordmark {
+      font-size: 20px; font-weight: 800; color: var(--navy);
+      letter-spacing: -0.5px;
+    }
+    .nav-wordmark span { font-weight: 500; color: var(--blue); }
+    .nav-links { display: flex; gap: 36px; align-items: center; }
+    .nav-links a {
+      color: var(--text-muted); font-size: 14px; font-weight: 600;
+      letter-spacing: .2px; transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--navy); text-decoration: none; }
+    .nav-cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--navy); color: var(--white);
+      border: none; border-radius: var(--radius-sm);
+      padding: 10px 22px; font-size: 14px; font-weight: 700;
+      font-family: var(--font);
+      cursor: pointer; transition: all .25s;
+      text-decoration: none;
+    }
+    .nav-cta:hover {
+      background: var(--blue); color: var(--white);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(46,117,182,.25);
+      text-decoration: none;
+    }
+
+    /* ══════════════════════════
+       HERO
+       ══════════════════════════ */
+    .hero {
+      padding: 160px 0 100px;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 80% 60% at 70% 20%, rgba(46,117,182,.06) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 20% 80%, rgba(224,122,95,.04) 0%, transparent 60%),
+        var(--bg-warm);
+    }
+    .hero::after {
+      content: '';
+      position: absolute; top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(46,117,182,.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      display: grid; grid-template-columns: 1.1fr .9fr; gap: 72px; align-items: center;
+      position: relative; z-index: 1;
+    }
+    .hero-overline {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--coral);
+      margin-bottom: 20px;
+    }
+    .hero-overline::before {
+      content: '';
+      width: 24px; height: 2px;
+      background: var(--coral);
+    }
+    .hero h1 {
+      font-size: 52px; font-weight: 800; line-height: 1.1;
+      color: var(--navy); letter-spacing: -1.5px;
+      margin-bottom: 24px;
+    }
+    .hero h1 em {
+      font-style: italic; font-family: var(--font-serif);
+      font-weight: 500; color: var(--blue);
+    }
+    .hero-sub {
+      font-size: 18px; color: var(--text-body); line-height: 1.75;
+      max-width: 520px; margin-bottom: 40px;
+    }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--navy); color: var(--white);
+      border: none; border-radius: 12px;
+      padding: 16px 32px; font-size: 16px; font-weight: 700;
+      font-family: var(--font); cursor: pointer;
+      transition: all .25s;
+      box-shadow: 0 4px 20px rgba(31,56,100,.2);
+      text-decoration: none;
+    }
+    .btn-primary:hover {
+      background: var(--blue);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(46,117,182,.3);
+      text-decoration: none; color: var(--white);
+    }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--navy);
+      border: 2px solid rgba(31,56,100,.15); border-radius: 12px;
+      padding: 14px 28px; font-size: 16px; font-weight: 600;
+      font-family: var(--font); cursor: pointer;
+      transition: all .25s; text-decoration: none;
+    }
+    .btn-ghost:hover {
+      border-color: var(--navy); background: rgba(31,56,100,.03);
+      text-decoration: none; color: var(--navy);
+    }
+
+    /* Phone mockup — refined */
+    .hero-visual {
+      display: flex; justify-content: center; align-items: center;
+      position: relative;
+    }
+    .phone-frame {
+      width: 280px; position: relative;
+      border-radius: 40px;
+      background: var(--navy);
+      padding: 12px;
+      box-shadow:
+        0 32px 80px rgba(31,56,100,.2),
+        0 8px 32px rgba(31,56,100,.1),
+        inset 0 1px 0 rgba(255,255,255,.1);
+    }
+    .phone-screen {
+      background: var(--cream); border-radius: 30px;
+      overflow: hidden; padding: 20px 16px;
+      min-height: 480px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .phone-status {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 11px; font-weight: 600; color: var(--text-muted);
+      padding: 0 4px 8px; border-bottom: 1px solid rgba(31,56,100,.06);
+      margin-bottom: 4px;
+    }
+    .phone-chat-header {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--navy); color: var(--white);
+      border-radius: 12px; padding: 12px 14px;
+      margin-bottom: 4px;
+    }
+    .phone-chat-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .phone-chat-avatar img { width: 22px; height: 22px; }
+    .phone-chat-name { font-size: 13px; font-weight: 700; }
+    .phone-chat-status { font-size: 10px; opacity: .6; }
+    .msg {
+      border-radius: 14px; padding: 10px 14px;
+      font-size: 12px; line-height: 1.5; max-width: 85%;
+    }
+    .msg-bot {
+      background: var(--white); color: var(--text-dark);
+      box-shadow: var(--shadow-sm); align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+    .msg-user {
+      background: var(--blue); color: var(--white);
+      align-self: flex-end; border-bottom-right-radius: 4px;
+    }
+    .msg-triage {
+      background: linear-gradient(135deg, #FFF8ED 0%, #FFF3E0 100%);
+      border: 1.5px solid var(--amber);
+      border-radius: 12px; padding: 12px 14px;
+      font-size: 11px; line-height: 1.6;
+    }
+    .msg-triage-badge {
+      display: inline-block;
+      background: var(--amber); color: var(--white);
+      border-radius: 6px; padding: 2px 8px;
+      font-size: 10px; font-weight: 800;
+      letter-spacing: .3px; margin-bottom: 6px;
+    }
+    .phone-kb {
+      display: flex; gap: 6px; margin-top: 2px;
+    }
+    .phone-kb-btn {
+      flex: 1; background: var(--white);
+      border: 1.5px solid var(--blue-light);
+      border-radius: 8px; padding: 6px 4px;
+      font-size: 10px; text-align: center;
+      color: var(--navy); font-weight: 700;
+    }
+
+    /* Floating coral dots decoration */
+    .hero-deco-1,
+    .hero-deco-2,
+    .hero-deco-3 {
+      position: absolute; border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-deco-1 {
+      width: 120px; height: 120px;
+      background: rgba(224,122,95,.08);
+      bottom: -20px; right: 40px;
+    }
+    .hero-deco-2 {
+      width: 60px; height: 60px;
+      background: rgba(46,117,182,.06);
+      top: 60px; right: -10px;
+    }
+    .hero-deco-3 {
+      width: 16px; height: 16px;
+      background: var(--coral);
+      opacity: .4;
+      top: 30%; left: -30px;
+    }
+
+    /* ══════════════════════════
+       STATS STRIP
+       ══════════════════════════ */
+    .stats {
+      padding: 48px 0;
+      background: var(--navy);
+      position: relative;
+    }
+    .stats::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
+    }
+    .stats-inner {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-size: 40px; font-weight: 800; color: var(--white);
+      line-height: 1; margin-bottom: 8px; letter-spacing: -1px;
+    }
+    .stat-label {
+      font-size: 13px; color: rgba(255,255,255,.55);
+      line-height: 1.5; max-width: 200px; margin: 0 auto;
+    }
+
+    /* ══════════════════════════
+       SECTION TYPOGRAPHY
+       ══════════════════════════ */
+    .section-overline {
+      font-size: 12px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--coral);
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-overline::before {
+      content: ''; width: 20px; height: 2px; background: var(--coral);
+    }
+    .section-title {
+      font-size: 40px; font-weight: 800; line-height: 1.15;
+      color: var(--navy); letter-spacing: -1px;
+      margin-bottom: 18px;
+    }
+    .section-title em {
+      font-style: italic; font-family: var(--font-serif);
+      font-weight: 500;
+    }
+    .section-desc {
+      font-size: 17px; color: var(--text-muted); line-height: 1.75;
+      max-width: 560px;
+    }
+
+    /* ══════════════════════════
+       PROBLEM
+       ══════════════════════════ */
+    .problem {
+      background: var(--white);
+      position: relative;
+    }
+    .problem::before {
+      content: '';
+      position: absolute; top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 1px; height: 60px;
+      background: linear-gradient(to bottom, var(--blue-light), transparent);
+    }
+    .problem-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 56px;
+    }
+    .problem-card {
+      background: var(--cream); border-radius: var(--radius);
+      padding: 32px 28px;
+      border: 1px solid rgba(31,56,100,.04);
+      transition: transform .3s, box-shadow .3s;
+      position: relative;
+    }
+    .problem-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .problem-card::before {
+      content: '';
+      position: absolute; top: 0; left: 28px; right: 28px;
+      height: 3px; border-radius: 0 0 3px 3px;
+      background: var(--coral);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    .problem-card:hover::before { opacity: 1; }
+    .problem-num {
+      font-size: 48px; font-weight: 800; color: var(--blue-light);
+      font-family: var(--font-serif); line-height: 1;
+      margin-bottom: 16px;
+    }
+    .problem-card h3 {
+      font-size: 17px; font-weight: 700; color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .problem-card p {
+      font-size: 14px; color: var(--text-muted); line-height: 1.7;
+    }
+    .problem-evidence {
+      margin-top: 12px; font-size: 12px; font-weight: 700;
+      color: var(--coral); letter-spacing: .2px;
+    }
+
+    /* ══════════════════════════
+       HOW IT WORKS
+       ══════════════════════════ */
+    .how-it-works {
+      background: var(--bg-warm);
+      position: relative;
+    }
+    .steps {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 56px;
+      position: relative;
+    }
+    /* Connecting line */
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 36px; left: 10%; right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue-light), var(--blue), var(--blue-light));
+      opacity: .4;
+    }
+    .step {
+      text-align: center; padding: 28px 20px;
+      position: relative; z-index: 1;
+    }
+    .step-circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--white);
+      border: 2px solid var(--blue-light);
+      margin: 0 auto 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      transition: all .3s;
+      box-shadow: var(--shadow-sm);
+    }
+    .step:hover .step-circle {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 8px rgba(46,117,182,.08);
+      transform: scale(1.05);
+    }
+    .step-number {
+      position: absolute; top: 18px; right: calc(50% - 46px);
+      font-size: 11px; font-weight: 800;
+      color: var(--white); background: var(--blue);
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 2;
+    }
+    .step h3 {
+      font-size: 15px; font-weight: 700; color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .step p {
+      font-size: 13px; color: var(--text-muted); line-height: 1.6;
+    }
+
+    /* ══════════════════════════
+       TRIAGE
+       ══════════════════════════ */
+    .triage {
+      background: var(--navy);
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+    .triage::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 80% 20%, rgba(46,117,182,.15) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 10% 80%, rgba(224,122,95,.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .triage .section-overline { color: var(--coral-soft); }
+    .triage .section-overline::before { background: var(--coral-soft); }
+    .triage .section-title { color: var(--white); }
+    .triage .section-desc { color: rgba(255,255,255,.6); }
+
+    .triage-levels {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+      margin-top: 52px; position: relative; z-index: 1;
+    }
+    .triage-card {
+      border-radius: var(--radius); padding: 32px 28px;
+      backdrop-filter: blur(8px);
+      transition: transform .3s;
+    }
+    .triage-card:hover { transform: translateY(-4px); }
+    .triage-card.level-green {
+      background: rgba(5,150,105,.12);
+      border: 1px solid rgba(5,150,105,.25);
+    }
+    .triage-card.level-yellow {
+      background: rgba(233,163,59,.12);
+      border: 1px solid rgba(233,163,59,.25);
+    }
+    .triage-card.level-red {
+      background: rgba(220,38,38,.12);
+      border: 1px solid rgba(220,38,38,.25);
+    }
+    .triage-indicator {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px;
+    }
+    .triage-dot-icon {
+      width: 14px; height: 14px; border-radius: 50%;
+    }
+    .triage-dot-icon.green { background: #059669; box-shadow: 0 0 12px rgba(5,150,105,.4); }
+    .triage-dot-icon.yellow { background: #E9A23B; box-shadow: 0 0 12px rgba(233,163,59,.4); }
+    .triage-dot-icon.red { background: #DC2626; box-shadow: 0 0 12px rgba(220,38,38,.4); }
+    .triage-card h3 {
+      font-size: 18px; font-weight: 700; color: var(--white);
+      margin-bottom: 12px;
+    }
+    .triage-card p {
+      font-size: 14px; color: rgba(255,255,255,.7); line-height: 1.7;
+    }
+    .triage-note {
+      margin-top: 36px; padding: 20px 24px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 12px;
+      font-size: 13px; color: rgba(255,255,255,.45); line-height: 1.7;
+      position: relative; z-index: 1;
+    }
+    .triage-note strong { color: rgba(255,255,255,.8); }
+
+    /* ══════════════════════════
+       FOR DOCTORS
+       ══════════════════════════ */
+    .doctors {
+      background: var(--white);
+    }
+    .doctors-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center;
+    }
+    .feature-list {
+      margin-top: 32px; display: flex; flex-direction: column; gap: 20px;
+    }
+    .feature-row {
+      display: flex; gap: 16px; align-items: flex-start;
+    }
+    .feature-icon-box {
+      width: 44px; height: 44px; min-width: 44px;
+      border-radius: 12px; background: var(--cream);
+      border: 1px solid rgba(31,56,100,.06);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .feature-row h4 {
+      font-size: 15px; font-weight: 700; color: var(--navy);
+      margin-bottom: 3px;
+    }
+    .feature-row p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+    /* Dashboard mockup */
+    .dash-frame {
+      background: var(--cream); border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(31,56,100,.06);
+      box-shadow: var(--shadow-lg);
+    }
+    .dash-bar {
+      background: var(--navy); padding: 14px 20px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .dash-bar-title {
+      font-size: 13px; font-weight: 700; color: var(--white);
+    }
+    .dash-bar-meta { font-size: 11px; color: rgba(255,255,255,.45); }
+    .dash-bar-dots { display: flex; gap: 5px; }
+    .dash-bar-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: rgba(255,255,255,.12);
+    }
+    .dash-bar-dot:nth-child(1) { background: #ff5f57; }
+    .dash-bar-dot:nth-child(2) { background: #ffbd2e; }
+    .dash-bar-dot:nth-child(3) { background: #28ca41; }
+    .dash-body { padding: 20px; }
+    .dash-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(31,56,100,.05);
+    }
+    .dash-row:last-child { border-bottom: none; }
+    .dash-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800;
+    }
+    .dash-avatar.a-green { background: #D1FAE5; color: #065F46; }
+    .dash-avatar.a-yellow { background: #FEF3C7; color: #92400E; }
+    .dash-avatar.a-red { background: #FEE2E2; color: #991B1B; }
+    .dash-name { font-size: 13px; font-weight: 700; color: var(--navy); }
+    .dash-meta { font-size: 11px; color: var(--text-muted); }
+    .dash-info { flex: 1; }
+    .dash-pill {
+      font-size: 10px; font-weight: 800; padding: 4px 10px;
+      border-radius: 20px; letter-spacing: .3px;
+    }
+    .dash-pill.p-green { background: #D1FAE5; color: #065F46; }
+    .dash-pill.p-yellow { background: #FEF3C7; color: #92400E; }
+    .dash-pill.p-red { background: #FEE2E2; color: #991B1B; }
+
+    /* ══════════════════════════
+       PRICING
+       ══════════════════════════ */
+    .pricing {
+      background: var(--bg-warm);
+    }
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 56px;
+    }
+    .plan {
+      background: var(--white);
+      border: 1px solid rgba(31,56,100,.06);
+      border-radius: 20px; padding: 36px 32px;
+      position: relative;
+      transition: transform .3s, box-shadow .3s;
+    }
+    .plan:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .plan.plan-featured {
+      border: 2px solid var(--blue);
+      box-shadow: var(--shadow-md);
+      transform: scale(1.02);
+    }
+    .plan.plan-featured:hover {
+      transform: scale(1.02) translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+    .plan-tag {
+      position: absolute; top: -13px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--coral); color: var(--white);
+      font-size: 11px; font-weight: 800; letter-spacing: .5px;
+      padding: 4px 16px; border-radius: 20px; white-space: nowrap;
+    }
+    .plan-name {
+      font-size: 16px; font-weight: 800; color: var(--navy);
+      margin-bottom: 10px; letter-spacing: .2px;
+    }
+    .plan-price {
+      font-size: 42px; font-weight: 800; color: var(--navy);
+      line-height: 1; margin-bottom: 4px; letter-spacing: -1px;
+    }
+    .plan-price sub {
+      font-size: 15px; font-weight: 500; color: var(--text-muted);
+      vertical-align: baseline;
+    }
+    .plan-desc {
+      font-size: 13px; color: var(--text-muted); margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .plan-features {
+      list-style: none; display: flex; flex-direction: column; gap: 12px;
+      margin-bottom: 32px;
+    }
+    .plan-features li {
+      font-size: 14px; display: flex; gap: 10px; align-items: flex-start;
+      color: var(--text-body);
+    }
+    .plan-features li .check {
+      color: var(--blue); font-weight: 800; flex-shrink: 0;
+      font-size: 14px; margin-top: 2px;
+    }
+    .plan-features li.off { color: var(--text-muted); opacity: .5; }
+    .plan-features li.off .check { color: var(--text-muted); }
+    .plan-btn {
+      width: 100%; padding: 14px;
+      border: 2px solid var(--blue); border-radius: 12px;
+      background: transparent; color: var(--blue);
+      font-size: 15px; font-weight: 700;
+      font-family: var(--font); cursor: pointer;
+      transition: all .25s;
+    }
+    .plan-btn:hover {
+      background: var(--blue); color: var(--white);
+    }
+    .plan.plan-featured .plan-btn {
+      background: var(--blue); color: var(--white);
+    }
+    .plan.plan-featured .plan-btn:hover {
+      background: var(--navy); border-color: var(--navy);
+    }
+    .plan.plan-b2b { border-color: rgba(31,56,100,.12); }
+    .plan.plan-b2b .plan-btn {
+      border-color: var(--navy); color: var(--navy);
+    }
+    .plan.plan-b2b .plan-btn:hover {
+      background: var(--navy); color: var(--white);
+    }
+
+    /* ══════════════════════════
+       TESTIMONIALS
+       ══════════════════════════ */
+    .testimonials {
+      background: var(--white);
+      position: relative;
+    }
+    .test-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 56px;
+    }
+    .test-card {
+      background: var(--cream);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      border: 1px solid rgba(31,56,100,.04);
+      transition: transform .3s, box-shadow .3s;
+      position: relative;
+    }
+    .test-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+    .test-quote {
+      position: absolute; top: 20px; right: 24px;
+      font-size: 48px; font-family: var(--font-serif);
+      color: var(--blue-light); line-height: 1; font-weight: 700;
+    }
+    .test-text {
+      font-size: 14px; line-height: 1.8; color: var(--text-body);
+      font-style: italic; margin-bottom: 20px;
+      position: relative; z-index: 1;
+    }
+    .test-author { display: flex; gap: 12px; align-items: center; }
+    .test-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: var(--blue); color: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 800; flex-shrink: 0;
+    }
+    .test-name { font-size: 14px; font-weight: 700; color: var(--navy); }
+    .test-meta { font-size: 12px; color: var(--text-muted); }
+
+    /* ══════════════════════════
+       CTA
+       ══════════════════════════ */
+    .cta {
+      background: var(--navy);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 50% 80% at 50% 100%, rgba(46,117,182,.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta h2 {
+      font-size: 42px; font-weight: 800; color: var(--white);
+      letter-spacing: -1px; margin-bottom: 16px;
+      line-height: 1.15;
+      position: relative; z-index: 1;
+    }
+    .cta h2 em {
+      font-style: italic; font-family: var(--font-serif);
+      font-weight: 500; color: var(--coral-soft);
+    }
+    .cta-desc {
+      font-size: 17px; color: rgba(255,255,255,.6);
+      max-width: 480px; margin: 0 auto 40px;
+      line-height: 1.7;
+      position: relative; z-index: 1;
+    }
+    .cta .btn-primary {
+      background: var(--white); color: var(--navy);
+      position: relative; z-index: 1;
+    }
+    .cta .btn-primary:hover {
+      background: var(--coral-soft); color: var(--navy);
+      box-shadow: 0 8px 32px rgba(224,122,95,.3);
+    }
+    .cta-fine {
+      margin-top: 20px; font-size: 13px;
+      color: rgba(255,255,255,.35);
+      position: relative; z-index: 1;
+    }
+
+    /* ══════════════════════════
+       FOOTER
+       ══════════════════════════ */
+    footer {
+      background: #16264A;
+      color: rgba(255,255,255,.55);
+      padding: 56px 0 28px;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+      margin-bottom: 40px;
+    }
+    .footer-brand {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px;
+    }
+    .footer-brand img { width: 32px; height: 32px; border-radius: 8px; }
+    .footer-brand-name {
+      font-size: 18px; font-weight: 800; color: var(--white);
+    }
+    .footer-brand-name span { font-weight: 500; color: var(--blue); }
+    .footer-desc { font-size: 13px; line-height: 1.7; max-width: 320px; }
+    .footer-legal {
+      margin-top: 14px; font-size: 11px; color: rgba(255,255,255,.3); line-height: 1.6;
+    }
+    .footer-col h4 {
+      font-size: 11px; font-weight: 800; color: rgba(255,255,255,.75);
+      text-transform: uppercase; letter-spacing: 1.5px;
+      margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a {
+      font-size: 13px; color: rgba(255,255,255,.45);
+      transition: color .2s;
+    }
+    .footer-col a:hover { color: var(--white); text-decoration: none; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding-top: 20px;
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: rgba(255,255,255,.25);
+    }
+
+    /* ══════════════════════════
+       RESPONSIVE
+       ══════════════════════════ */
+    @media (max-width: 960px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+      .hero h1 { font-size: 38px; }
+      .hero-visual { order: -1; }
+      .phone-frame { width: 240px; }
+      .phone-screen { min-height: 420px; }
+      .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+      .problem-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: repeat(2, 1fr); }
+      .steps::before { display: none; }
+      .triage-levels { grid-template-columns: 1fr; }
+      .doctors-inner { grid-template-columns: 1fr; gap: 48px; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin-left: auto; margin-right: auto; }
+      .plan.plan-featured { transform: none; }
+      .plan.plan-featured:hover { transform: translateY(-4px); }
+      .test-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .section-title { font-size: 32px; }
+    }
+    @media (max-width: 640px) {
+      section { padding: 72px 0; }
+      .hero { padding: 120px 0 72px; }
+      .hero h1 { font-size: 32px; letter-spacing: -1px; }
+      .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+      .stat-num { font-size: 28px; }
+      .steps { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 8px; }
+      .nav-links { display: none; }
+      .cta h2 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav id="main-nav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <img class="nav-logo" src="logo.png" alt="ЛОРдок" />
+      <div class="nav-wordmark">ЛОР<span>док</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="#how-it-works">Как работает</a>
+      <a href="#for-doctors">Врачам</a>
+      <a href="#pricing">Тарифы</a>
+    </div>
+    <a href="https://t.me/LOR_DOC_BOT?start=website" class="nav-cta">
+      Попробовать
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="hero-overline reveal">Медицинский self-мониторинг</div>
+        <h1 class="reveal reveal-delay-1">Контролируйте<br>ЛОР-симптомы<br><em>между визитами</em><span class="coral-dot coral-dot-lg"></span></h1>
+        <p class="hero-sub reveal reveal-delay-2">
+          Ежедневный дневник симптомов, AI-триаж на основе клинических рекомендаций
+          и своевременная рекомендация о визите. Без диагнозов — только чёткий ответ,
+          когда идти к врачу.
+        </p>
+        <div class="hero-actions reveal reveal-delay-3">
+          <a href="https://t.me/LOR_DOC_BOT?start=website" class="btn-primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.93 6.47l-1.67 7.87c-.12.54-.44.67-.89.42l-2.46-1.81-1.19 1.14c-.13.13-.24.24-.5.24l.18-2.51 4.57-4.13c.2-.18-.04-.27-.3-.1L7.3 14.08 4.87 13.3c-.53-.17-.54-.53.11-.78l9.67-3.73c.44-.16.83.11.28.68z" fill="currentColor"/>
+            </svg>
+            Открыть в Telegram
+          </a>
+          <a href="#how-it-works" class="btn-ghost">Узнать подробнее</a>
+        </div>
+      </div>
+      <div class="hero-visual reveal reveal-delay-2">
+        <div class="hero-deco-1"></div>
+        <div class="hero-deco-2"></div>
+        <div class="hero-deco-3"></div>
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="phone-status">
+              <span>21:32</span>
+              <span>4G</span>
+            </div>
+            <div class="phone-chat-header">
+              <div class="phone-chat-avatar">
+                <img src="logo.png" alt="ЛОРдок" />
+              </div>
+              <div>
+                <div class="phone-chat-name">ЛОРдок</div>
+                <div class="phone-chat-status">онлайн</div>
+              </div>
+            </div>
+            <div class="msg msg-bot">Добрый вечер! Оцените симптомы сегодня</div>
+            <div class="phone-kb">
+              <div class="phone-kb-btn">Нос</div>
+              <div class="phone-kb-btn">Горло</div>
+              <div class="phone-kb-btn">Ухо</div>
+            </div>
+            <div class="msg msg-user">Заложенность 3, давление 2</div>
+            <div class="msg msg-bot">Записал. Это 5-й день подряд с высокой заложенностью</div>
+            <div class="msg-triage">
+              <div class="msg-triage-badge">РЕКОМЕНДУЮ ВИЗИТ</div>
+              <div>Симптомы 5+ дней без улучшения — показание для осмотра ЛОРа. Запишитесь в ближайшие 1–2 дня.</div>
+            </div>
+            <div class="msg msg-bot" style="font-size:10px;color:var(--text-muted);">Отчёт за неделю готов → /report</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STATS ═══ -->
+<div class="stats">
+  <div class="container">
+    <div class="stats-inner">
+      <div class="stat reveal">
+        <div class="stat-num">40 млн</div>
+        <div class="stat-label">пациентов с хроническими ЛОР-заболеваниями в России</div>
+      </div>
+      <div class="stat reveal reveal-delay-1">
+        <div class="stat-num">16 / 18</div>
+        <div class="stat-label">участников кастдева не знают, когда идти к врачу</div>
+      </div>
+      <div class="stat reveal reveal-delay-2">
+        <div class="stat-num">68%</div>
+        <div class="stat-label">обострений связаны с задержкой обращения</div>
+      </div>
+      <div class="stat reveal reveal-delay-3">
+        <div class="stat-num">14 / 18</div>
+        <div class="stat-label">не умеют отслеживать динамику симптомов</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PROBLEM ═══ -->
+<section class="problem" id="problem">
+  <div class="container">
+    <div class="section-overline reveal">Почему это важно</div>
+    <h2 class="section-title reveal reveal-delay-1">Между визитами к врачу<br>пациент остаётся <em>один</em><span class="coral-dot"></span></h2>
+    <p class="section-desc reveal reveal-delay-2">Хронические ЛОР-заболевания требуют постоянного контроля. Но инструментов для этого нет — до ЛОРдока.</p>
+    <div class="problem-grid">
+      <div class="problem-card reveal">
+        <div class="problem-num">01</div>
+        <h3>Нет инструмента самоконтроля</h3>
+        <p>Пациент ориентируется на субъективные ощущения. Нет возможности увидеть тренд: симптомы ухудшаются или это обычное колебание?</p>
+        <div class="problem-evidence">14 из 18 участников исследования</div>
+      </div>
+      <div class="problem-card reveal reveal-delay-1">
+        <div class="problem-num">02</div>
+        <h3>Непонятно, когда идти к врачу</h3>
+        <p>«Уже пора» или «ещё подожду»? Отсутствие ориентира приводит к двум крайностям: поздний визит с осложнением или ненужный приём.</p>
+        <div class="problem-evidence">16 из 18 участников исследования</div>
+      </div>
+      <div class="problem-card reveal reveal-delay-2">
+        <div class="problem-num">03</div>
+        <h3>Врач не видит динамику</h3>
+        <p>На приёме пациент описывает симптомы по памяти. Нет объективных данных за период между визитами — клиническое решение принимается вслепую.</p>
+        <div class="problem-evidence">По данным экспертных интервью</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section class="how-it-works" id="how-it-works">
+  <div class="container">
+    <div class="section-overline reveal">Как это работает</div>
+    <h2 class="section-title reveal reveal-delay-1">Четыре шага — от симптома<br>до <em>решения о визите</em><span class="coral-dot"></span></h2>
+    <p class="section-desc reveal reveal-delay-2">Простой ежедневный ритуал в Telegram-боте. 30 секунд.</p>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-number">1</div>
+        <div class="step-circle">&#128221;</div>
+        <h3>Фиксируете симптомы</h3>
+        <p>Каждый вечер — короткий опрос: нос, горло, ухо, общее самочувствие. Оценка по шкале 0–3.</p>
+      </div>
+      <div class="step reveal reveal-delay-1">
+        <div class="step-number">2</div>
+        <div class="step-circle">&#128200;</div>
+        <h3>Видите динамику</h3>
+        <p>График симптомов за неделю и месяц. Сразу видно: стабилизация, ухудшение или восстановление.</p>
+      </div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-number">3</div>
+        <div class="step-circle">&#129302;</div>
+        <h3>Получаете триаж</h3>
+        <p>AI анализирует паттерн симптомов на основе клинических рекомендаций и даёт чёткую рекомендацию.</p>
+      </div>
+      <div class="step reveal reveal-delay-3">
+        <div class="step-number">4</div>
+        <div class="step-circle">&#128196;</div>
+        <h3>Отправляете врачу PDF</h3>
+        <p>Сводка за период — с графиками и динамикой — одной кнопкой. Врач сразу видит картину.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TRIAGE ═══ -->
+<section class="triage" id="triage">
+  <div class="container">
+    <div class="section-overline reveal">AI-триаж</div>
+    <h2 class="section-title reveal reveal-delay-1">Не диагноз —<br>решение о визите<span class="coral-dot coral-dot-lg"></span></h2>
+    <p class="section-desc reveal reveal-delay-2">
+      ЛОРдок не ставит диагнозов. По итогам кастдева (18 интервью) мы полностью отказались от AI-диагностики — пользователи боятся ошибочного диагноза. Продукт делает только одно: помогает принять взвешенное решение о визите к врачу.
+    </p>
+    <div class="triage-levels">
+      <div class="triage-card level-green reveal">
+        <div class="triage-indicator">
+          <div class="triage-dot-icon green"></div>
+        </div>
+        <h3>Наблюдайте</h3>
+        <p>Симптомы умеренные, динамика стабильная или положительная. Продолжайте вести дневник и следуйте рекомендациям врача.</p>
+      </div>
+      <div class="triage-card level-yellow reveal reveal-delay-1">
+        <div class="triage-indicator">
+          <div class="triage-dot-icon yellow"></div>
+        </div>
+        <h3>Запишитесь к врачу</h3>
+        <p>Симптомы сохраняются 5+ дней без улучшения или нарастают. Рекомендуем плановый визит в течение 1–3 дней.</p>
+      </div>
+      <div class="triage-card level-red reveal reveal-delay-2">
+        <div class="triage-indicator">
+          <div class="triage-dot-icon red"></div>
+        </div>
+        <h3>Обратитесь сегодня</h3>
+        <p>Выраженные симптомы с признаками осложнения (высокая температура, сильная боль). Нужна срочная консультация.</p>
+      </div>
+    </div>
+    <div class="triage-note reveal">
+      <strong>Важно:</strong> ЛОРдок — инструмент самомониторинга, не медицинский прибор. Рекомендации основаны на клинических алгоритмах и не заменяют консультацию врача. Все пороговые значения прошли клинический аудит практикующими ЛОР-специалистами.
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOR DOCTORS ═══ -->
+<section class="doctors" id="for-doctors">
+  <div class="container">
+    <div class="doctors-inner">
+      <div class="doctors-text">
+        <div class="section-overline reveal">Для клиник и врачей</div>
+        <h2 class="section-title reveal reveal-delay-1">Дашборд врача:<br>пациент <em>под контролем</em><span class="coral-dot"></span></h2>
+        <p class="section-desc reveal reveal-delay-2" style="max-width:none;">Видите динамику симптомов всех прикреплённых пациентов в одном экране. Сокращаете время сбора анамнеза и снижаете долю экстренных обращений.</p>
+        <div class="feature-list">
+          <div class="feature-row reveal">
+            <div class="feature-icon-box">&#128200;</div>
+            <div>
+              <h4>Графики динамики симптомов</h4>
+              <p>Ежедневные данные от пациента в структурированном виде — тенденция за 30 дней.</p>
+            </div>
+          </div>
+          <div class="feature-row reveal reveal-delay-1">
+            <div class="feature-icon-box">&#9898;</div>
+            <div>
+              <h4>Цветовая маркировка риска</h4>
+              <p>Автоматическая расстановка приоритетов: зелёный / жёлтый / красный уровень контроля.</p>
+            </div>
+          </div>
+          <div class="feature-row reveal reveal-delay-2">
+            <div class="feature-icon-box">&#128206;</div>
+            <div>
+              <h4>Экспорт в PDF для ЭМК</h4>
+              <p>Структурированная выписка для вклейки в карту или загрузки в медицинскую систему.</p>
+            </div>
+          </div>
+          <div class="feature-row reveal reveal-delay-3">
+            <div class="feature-icon-box">&#128274;</div>
+            <div>
+              <h4>152-ФЗ, данные в РФ</h4>
+              <p>Обработка персональных данных соответствует законодательству. DPA включён в договор.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <div class="dash-frame">
+          <div class="dash-bar">
+            <div>
+              <div class="dash-bar-dots">
+                <div class="dash-bar-dot"></div>
+                <div class="dash-bar-dot"></div>
+                <div class="dash-bar-dot"></div>
+              </div>
+            </div>
+            <div class="dash-bar-title">Пациенты · 12 активных</div>
+            <div class="dash-bar-meta">Обновлено сегодня</div>
+          </div>
+          <div class="dash-body">
+            <div class="dash-row">
+              <div class="dash-avatar a-green">АК</div>
+              <div class="dash-info">
+                <div class="dash-name">Анна К., 34 г.</div>
+                <div class="dash-meta">Хр. риносинусит · Дн. 23</div>
+              </div>
+              <span class="dash-pill p-green">Стабильно</span>
+            </div>
+            <div class="dash-row">
+              <div class="dash-avatar a-yellow">СМ</div>
+              <div class="dash-info">
+                <div class="dash-name">Сергей М., 47 г.</div>
+                <div class="dash-meta">Хр. отит · Дн. 5</div>
+              </div>
+              <span class="dash-pill p-yellow">Ухудшение</span>
+            </div>
+            <div class="dash-row">
+              <div class="dash-avatar a-red">НВ</div>
+              <div class="dash-info">
+                <div class="dash-name">Наталья В., 29 г.</div>
+                <div class="dash-meta">Хр. тонзиллит · Дн. 7</div>
+              </div>
+              <span class="dash-pill p-red">Срочно</span>
+            </div>
+            <div class="dash-row">
+              <div class="dash-avatar a-green">ИП</div>
+              <div class="dash-info">
+                <div class="dash-name">Иван П., 55 г.</div>
+                <div class="dash-meta">Хр. риносинусит · Дн. 41</div>
+              </div>
+              <span class="dash-pill p-green">Стабильно</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PRICING ═══ -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-overline reveal">Тарифы</div>
+    <h2 class="section-title reveal reveal-delay-1">Начните бесплатно,<br>платите за <em>результат</em><span class="coral-dot"></span></h2>
+    <p class="section-desc reveal reveal-delay-2">Базовые функции — навсегда бесплатно. Premium открывает расширенную историю и экспорт.</p>
+    <div class="pricing-grid">
+      <div class="plan reveal">
+        <div class="plan-name">Free</div>
+        <div class="plan-price">0 <sub>₽/мес</sub></div>
+        <div class="plan-desc">Для тех, кто начинает вести дневник</div>
+        <ul class="plan-features">
+          <li><span class="check">&#10003;</span> Ежедневный симптом-дневник</li>
+          <li><span class="check">&#10003;</span> AI-триаж после каждой записи</li>
+          <li><span class="check">&#10003;</span> История за 7 дней</li>
+          <li><span class="check">&#10003;</span> График динамики</li>
+          <li><span class="check">&#10003;</span> PDF-отчёт для врача</li>
+          <li class="off"><span class="check">&#10005;</span> Экспорт данных (CSV)</li>
+        </ul>
+        <button class="plan-btn" onclick="window.open('https://t.me/LOR_DOC_BOT?start=website','_blank')">Попробовать</button>
+      </div>
+      <div class="plan plan-featured reveal reveal-delay-1">
+        <div class="plan-tag">Популярный</div>
+        <div class="plan-name">Premium</div>
+        <div class="plan-price">590 <sub>₽/мес</sub></div>
+        <div class="plan-desc">Полный контроль и коммуникация с врачом</div>
+        <ul class="plan-features">
+          <li><span class="check">&#10003;</span> Ежедневный симптом-дневник</li>
+          <li><span class="check">&#10003;</span> AI-триаж после каждой записи</li>
+          <li><span class="check">&#10003;</span> История за 365 дней</li>
+          <li><span class="check">&#10003;</span> График динамики симптомов</li>
+          <li><span class="check">&#10003;</span> PDF-отчёт для врача (неограниченно)</li>
+          <li><span class="check">&#10003;</span> Экспорт данных (CSV)</li>
+        </ul>
+        <button class="plan-btn" onclick="showComingSoon()">Оформить подписку</button>
+      </div>
+      <div class="plan plan-b2b reveal reveal-delay-2">
+        <div class="plan-name">Для клиники</div>
+        <div class="plan-price">4 900 <sub>₽/мес</sub></div>
+        <div class="plan-desc">Дашборд врача для мониторинга пациентов</div>
+        <ul class="plan-features">
+          <li><span class="check">&#10003;</span> Premium для всех пациентов</li>
+          <li><span class="check">&#10003;</span> Дашборд с риск-маркировкой</li>
+          <li><span class="check">&#10003;</span> Экспорт в PDF для ЭМК</li>
+          <li><span class="check">&#10003;</span> DPA и 152-ФЗ документация</li>
+          <li><span class="check">&#10003;</span> Поддержка внедрения</li>
+          <li><span class="check">&#10003;</span> Персональный менеджер</li>
+        </ul>
+        <button class="plan-btn" onclick="showComingSoon()">Обсудить пилот</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIALS ═══ -->
+<section class="testimonials">
+  <div class="container">
+    <div class="section-overline reveal">Из кастдева</div>
+    <h2 class="section-title reveal reveal-delay-1">Что говорят <em>пользователи</em><span class="coral-dot"></span></h2>
+    <p class="section-desc reveal reveal-delay-2">Мнения участников глубинных интервью (n = 18).</p>
+    <div class="test-grid">
+      <div class="test-card reveal">
+        <div class="test-quote">&ldquo;</div>
+        <p class="test-text">У меня хронический гайморит уже 6 лет. Я так и не научилась понимать, когда нужно срочно к врачу, а когда можно потерпеть. Если бы был инструмент, который говорил бы мне это чётко — я бы платила.</p>
+        <div class="test-author">
+          <div class="test-avatar">А</div>
+          <div>
+            <div class="test-name">Анна, 34 года</div>
+            <div class="test-meta">Хронический риносинусит, Москва</div>
+          </div>
+        </div>
+      </div>
+      <div class="test-card reveal reveal-delay-1">
+        <div class="test-quote">&ldquo;</div>
+        <p class="test-text">Я несколько раз пропускал начало обострения, потому что не замечал, как симптомы нарастают постепенно. Нужен какой-то трекер, как шагомер, только для ЛОР-симптомов.</p>
+        <div class="test-author">
+          <div class="test-avatar">С</div>
+          <div>
+            <div class="test-name">Сергей, 47 лет</div>
+            <div class="test-meta">Хронический отит, Санкт-Петербург</div>
+          </div>
+        </div>
+      </div>
+      <div class="test-card reveal reveal-delay-2">
+        <div class="test-quote">&ldquo;</div>
+        <p class="test-text">Было бы здорово отправить врачу не просто свои слова «мне было плохо на прошлой неделе», а нормальный отчёт с данными. Это сэкономило бы время на приёме.</p>
+        <div class="test-author">
+          <div class="test-avatar">Н</div>
+          <div>
+            <div class="test-name">Наталья, 29 лет</div>
+            <div class="test-meta">Хронический тонзиллит, Казань</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta">
+  <div class="container">
+    <h2 class="reveal">Начните контролировать<br>симптомы <em>уже сегодня</em></h2>
+    <p class="cta-desc reveal reveal-delay-1">Telegram-бот. Не нужно скачивать приложение. Первые 7 дней — бесплатно.</p>
+    <a href="https://t.me/LOR_DOC_BOT?start=website" class="btn-primary reveal reveal-delay-2">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.93 6.47l-1.67 7.87c-.12.54-.44.67-.89.42l-2.46-1.81-1.19 1.14c-.13.13-.24.24-.5.24l.18-2.51 4.57-4.13c.2-.18-.04-.27-.3-.1L7.3 14.08 4.87 13.3c-.53-.17-.54-.53.11-.78l9.67-3.73c.44-.16.83.11.28.68z" fill="currentColor"/>
+      </svg>
+      Открыть @lordok_bot в Telegram
+    </a>
+    <div class="cta-fine reveal reveal-delay-3">Нажимая кнопку, вы соглашаетесь с <a href="terms.html" style="color:rgba(255,255,255,.7);text-decoration:underline">Пользовательским соглашением</a> и <a href="privacy.html" style="color:rgba(255,255,255,.7);text-decoration:underline">Политикой обработки ПДн</a>.</div>
+    <div class="cta-fine reveal reveal-delay-4" style="margin-top:8px;font-size:12px;opacity:.5">Имеются противопоказания, необходима консультация специалиста. Не является медицинским изделием.</div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">
+          <img src="logo.png" alt="ЛОРдок" />
+          <div class="footer-brand-name">ЛОР<span>док</span></div>
+        </div>
+        <p class="footer-desc">Платформа мониторинга хронических ЛОР-заболеваний. Создана практикующим ЛОР-врачом для пациентов, которые хотят контролировать своё состояние между визитами.</p>
+        <div class="footer-legal">
+          ЛОРдок — информационный сервис. Не является медицинским изделием. Не предназначен для постановки диагноза или назначения лечения.
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Продукт</h4>
+        <ul>
+          <li><a href="#how-it-works">Как работает</a></li>
+          <li><a href="#triage">AI-триаж</a></li>
+          <li><a href="#pricing">Тарифы</a></li>
+          <li><a href="#for-doctors">Для клиник</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Информация</h4>
+        <ul>
+          <li><a href="privacy.html">Конфиденциальность</a></li>
+          <li><a href="terms.html">Пользовательское соглашение</a></li>
+          <li><a href="privacy.html#152-fz">152-ФЗ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Контакты</h4>
+        <ul>
+          <li><a href="https://t.me/LOR_DOC_BOT?start=website">Telegram-бот</a></li>
+          <li><a href="mailto:info@lordok.ru">info@lordok.ru</a></li>
+          <li><a href="#">Для партнёрств</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2025–2026 ЛОРдок. Все права защищены.</span>
+      <span>Медицинский мониторинг · Telegram-бот</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Scroll reveal ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ── Nav scroll shadow ──
+  const nav = document.getElementById('main-nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  }, { passive: true });
+
+  // ── "Coming soon" modal ──
+  function showComingSoon() {
+    if (typeof ym !== 'undefined') ym(109000088, 'reachGoal', 'coming_soon_click');
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(31,56,100,.45);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(4px)';
+    const box = document.createElement('div');
+    box.style.cssText = 'background:#fff;border-radius:16px;padding:40px 36px;max-width:380px;text-align:center;box-shadow:0 16px 64px rgba(31,56,100,.18)';
+    box.innerHTML = '<div style="font-size:40px;margin-bottom:16px">🚀</div><h3 style="font-family:var(--font);color:var(--navy);margin-bottom:12px;font-size:20px">Раздел в разработке</h3><p style="font-family:var(--font);color:var(--text-body);font-size:15px;line-height:1.5;margin-bottom:24px">Спасибо за интерес! Мы скоро запустим эту функцию.</p><button style="font-family:var(--font);background:var(--blue);color:#fff;border:none;padding:10px 28px;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600" onclick="this.closest(\'div\').parentElement.remove()">Понятно</button>';
+    overlay.appendChild(box);
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+    document.body.appendChild(overlay);
+  }
+
+  // ── Track all clicks (for analytics) ──
+  document.addEventListener('click', function(e) {
+    const el = e.target.closest('a, button');
+    if (!el || typeof ym === 'undefined') return;
+    const label = el.textContent.trim().substring(0, 50);
+    const href = el.getAttribute('href') || '';
+    ym(109000088, 'reachGoal', 'click', { label: label, href: href });
+    // Track Telegram transitions specifically
+    if (href.includes('t.me/LOR_DOC_BOT')) {
+      ym(109000088, 'reachGoal', 'telegram_click', { from: el.closest('section')?.id || 'unknown' });
+    }
+  });
+</script>
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+  (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+  m[i].l=1*new Date();
+  for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}
+  k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+  (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+  ym(109000088, "init", {
+    clickmap: true,
+    trackLinks: true,
+    accurateTrackBounce: true,
+    webvisor: true,
+    trackHash: true
+  });
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/109000088" style="position:absolute;left:-9999px" alt=""/></div></noscript>
+
+</body>
+</html>

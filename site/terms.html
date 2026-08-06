@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Пользовательское соглашение — ЛОРдок</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #1F3864;
+      --blue: #2E75B6;
+      --blue-light: #D6E4F0;
+      --cream: #F8FAFC;
+      --coral: #E07A5F;
+      --white: #FFFFFF;
+      --text-dark: #1A2744;
+      --text-body: #3B4A63;
+      --text-muted: #7A8BA5;
+      --bg-warm: #FAF8F5;
+      --font: 'Manrope', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      color: var(--text-body);
+      background: var(--bg-warm);
+      line-height: 1.75;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--blue); text-decoration: none; transition: color .2s; }
+    a:hover { color: var(--navy); text-decoration: underline; }
+
+    .doc-header {
+      background: var(--navy);
+      padding: 24px 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .header-logo {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+    }
+    .header-brand {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.5px;
+    }
+    .header-brand span { font-weight: 500; color: var(--blue-light); }
+    .header-back {
+      margin-left: auto;
+      color: rgba(255,255,255,.6);
+      font-size: 14px;
+      font-weight: 600;
+      transition: color .2s;
+    }
+    .header-back:hover { color: var(--white); text-decoration: none; }
+
+    .doc-content {
+      padding: 48px 0 80px;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text-dark);
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .doc-date {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+    }
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-top: 40px;
+      margin-bottom: 12px;
+    }
+    h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-top: 24px;
+      margin-bottom: 8px;
+    }
+    p { margin-bottom: 14px; }
+
+    .highlight-box {
+      background: var(--cream);
+      border-left: 4px solid var(--coral);
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 15px;
+    }
+
+    .highlight-box-blue {
+      background: var(--cream);
+      border-left: 4px solid var(--blue);
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 15px;
+    }
+
+    .contact-block {
+      background: var(--white);
+      border: 1px solid var(--blue-light);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+    }
+    .contact-block p { margin-bottom: 6px; }
+
+    .doc-footer {
+      background: var(--navy);
+      padding: 24px 0;
+      text-align: center;
+      color: rgba(255,255,255,.5);
+      font-size: 13px;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 24px; }
+      h2 { font-size: 18px; }
+      .container { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="doc-header">
+  <div class="container">
+    <div class="header-inner">
+      <img class="header-logo" src="data:image/png;base64,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" alt="ЛОРдок" />
+      <div class="header-brand">ЛОР<span>док</span></div>
+      <a class="header-back" href="ЛОРдок_лендинг.html">← На главную</a>
+    </div>
+  </div>
+</header>
+
+<main class="doc-content">
+  <div class="container">
+    <h1>Пользовательское соглашение</h1>
+    <p class="doc-date">Редакция от 18 апреля 2026 г.</p>
+
+    <h2>1. Предмет соглашения</h2>
+    <p>
+      Настоящее Пользовательское соглашение (далее — Соглашение) регулирует отношения между Якушевым Дмитрием Игоревичем, самозанятый (НПД), ИНН 781624864719, г. Санкт-Петербург (далее — Правообладатель) и физическим лицом (далее — Пользователь), использующим информационный сервис «ЛОРдок» (далее — Сервис).
+    </p>
+    <p>
+      Сервис предоставляет возможность информационного мониторинга симптомов ЛОР-заболеваний, ведения электронного дневника симптомов, алгоритмической оценки состояния (триажа) и формирования структурированных отчётов. Сервис доступен через Telegram-бота <a href="https://t.me/lordok_bot">@lordok_bot</a>.
+    </p>
+    <p>
+      Начало использования Сервиса (отправка команды /start в Telegram-боте) означает полное и безоговорочное принятие Пользователем условий настоящего Соглашения и <a href="privacy.html">Политики обработки персональных данных</a>.
+    </p>
+
+    <h2>2. Статус Сервиса</h2>
+
+    <div class="highlight-box">
+      <strong>Сервис «ЛОРдок» является информационным сервисом.</strong> Он не является медицинским изделием, не зарегистрирован как медицинское изделие и не предназначен для постановки диагноза, назначения лечения или замены консультации врача.
+    </div>
+
+    <p>
+      Результаты оценки симптомов (триаж), рекомендации, уровни тревожности и иные выходные данные Сервиса носят исключительно информационный характер. Они основаны на алгоритмах, разработанных с учётом актуальных клинических рекомендаций, но не являются медицинским заключением.
+    </p>
+    <p>
+      Пользователь обязуется не использовать результаты работы Сервиса в качестве единственного основания для принятия решений о своём здоровье или здоровье третьих лиц. В случае ухудшения самочувствия, появления тревожных симптомов или необходимости медицинской помощи Пользователь обязан обратиться к квалифицированному врачу.
+    </p>
+
+    <h2>3. Условия использования</h2>
+
+    <h3>3.1. Права Пользователя</h3>
+    <p>
+      Пользователь вправе: использовать функциональность Сервиса в соответствии с его назначением; создавать профили пациентов (для себя и/или своих несовершеннолетних детей); вести дневник симптомов и получать алгоритмическую оценку; формировать отчёты и графики динамики; оставлять обратную связь; обращаться к Правообладателю по вопросам работы Сервиса.
+    </p>
+
+    <h3>3.2. Обязанности Пользователя</h3>
+    <p>
+      Пользователь обязуется: предоставлять достоверные сведения при заполнении профиля и дневника симптомов; не использовать Сервис в противоправных целях; не предпринимать попыток несанкционированного доступа к данным других пользователей, серверной инфраструктуре или программному коду Сервиса; не распространять вредоносное программное обеспечение через каналы взаимодействия с Сервисом.
+    </p>
+
+    <h3>3.3. Права Правообладателя</h3>
+    <p>
+      Правообладатель вправе: изменять, дополнять и обновлять функциональность Сервиса без предварительного уведомления; приостанавливать работу Сервиса для проведения технических работ; ограничивать доступ Пользователя при нарушении условий Соглашения; использовать обезличенные данные для улучшения алгоритмов и аналитики.
+    </p>
+
+    <h2>4. Тарифы и оплата</h2>
+    <p>
+      Сервис предоставляется на условиях, определённых действующими тарифами, размещёнными на странице Сервиса. Базовая функциональность доступна бесплатно. Расширенная функциональность (Премиум) предоставляется на платной основе.
+    </p>
+    <p>
+      Правообладатель вправе изменять стоимость и состав тарифов с предварительным уведомлением Пользователей не менее чем за 14 (четырнадцать) календарных дней.
+    </p>
+
+    <h2>5. Интеллектуальная собственность</h2>
+    <p>
+      Исключительные права на Сервис, его программный код, алгоритмы триажа, дизайн, товарный знак «ЛОРдок» и иные объекты интеллектуальной собственности, связанные с Сервисом, принадлежат Правообладателю.
+    </p>
+    <p>
+      Пользователю предоставляется неисключительная, непередаваемая лицензия на использование Сервиса исключительно в личных некоммерческих целях в соответствии с его функциональным назначением.
+    </p>
+    <p>
+      Копирование, воспроизведение, модификация, декомпиляция, обратная разработка или иное использование элементов Сервиса без письменного согласия Правообладателя запрещено.
+    </p>
+
+    <h2>6. Персональные данные</h2>
+    <p>
+      Обработка персональных данных Пользователя осуществляется в соответствии с <a href="privacy.html">Политикой обработки персональных данных</a>, являющейся неотъемлемой частью настоящего Соглашения.
+    </p>
+    <p>
+      Принимая условия Соглашения, Пользователь даёт согласие на обработку персональных данных, в том числе данных, относящихся к специальной категории (сведения о состоянии здоровья), на условиях и в целях, указанных в Политике.
+    </p>
+
+    <h2>7. Ограничение ответственности</h2>
+
+    <div class="highlight-box">
+      <strong>Правообладатель не несёт ответственности</strong> за любые прямые, косвенные, случайные, штрафные или иные убытки, возникшие вследствие использования или невозможности использования Сервиса.
+    </div>
+
+    <p>
+      В частности, Правообладатель не несёт ответственности за: решения Пользователя, принятые на основании данных Сервиса; последствия несвоевременного обращения к врачу; ошибки в данных, введённых Пользователем; перерывы в работе Сервиса по техническим причинам или причинам, не зависящим от Правообладателя; действия третьих лиц, в том числе платформы Telegram.
+    </p>
+    <p>
+      Сервис предоставляется «как есть» (as is). Правообладатель не гарантирует бесперебойной работы Сервиса, отсутствия ошибок или соответствия результатов конкретным ожиданиям Пользователя.
+    </p>
+
+    <h2>8. Порядок разрешения споров</h2>
+    <p>
+      Все споры и разногласия, возникающие в связи с настоящим Соглашением, разрешаются путём переговоров. При невозможности достижения согласия спор передаётся на рассмотрение в суд по месту нахождения Правообладателя в соответствии с законодательством Российской Федерации.
+    </p>
+
+    <h2>9. Срок действия и расторжение</h2>
+    <p>
+      Соглашение вступает в силу с момента начала использования Сервиса и действует бессрочно.
+    </p>
+    <p>
+      Пользователь вправе в любой момент прекратить использование Сервиса. Для удаления персональных данных Пользователь может направить запрос на адрес <a href="mailto:dmitryiyakushev@yandex.ru">dmitryiyakushev@yandex.ru</a>.
+    </p>
+    <p>
+      Правообладатель вправе расторгнуть Соглашение в одностороннем порядке в случае нарушения Пользователем его условий, с уведомлением через Telegram-бота.
+    </p>
+
+    <h2>10. Изменения Соглашения</h2>
+    <p>
+      Правообладатель вправе вносить изменения в настоящее Соглашение. Актуальная версия размещается на веб-сайте Сервиса. Продолжение использования Сервиса после публикации изменений означает согласие Пользователя с обновлённой редакцией.
+    </p>
+
+    <h2>11. Контактная информация</h2>
+    <div class="contact-block">
+      <p><strong>Правообладатель:</strong> Якушев Дмитрий Игоревич, самозанятый (НПД)</p>
+      <p>ИНН: 781624864719</p>
+      <p>Регион: г. Санкт-Петербург</p>
+      <p>Email: <a href="mailto:dmitryiyakushev@yandex.ru">dmitryiyakushev@yandex.ru</a></p>
+      <p>Telegram: <a href="https://t.me/lordok_bot">@lordok_bot</a></p>
+    </div>
+
+    <div class="highlight-box-blue">
+      <strong>Имеются противопоказания, необходима консультация специалиста.</strong> Сервис «ЛОРдок» не является медицинским изделием и не предназначен для постановки диагноза или назначения лечения.
+    </div>
+  </div>
+</main>
+
+<footer class="doc-footer">
+  <div class="container">
+    &copy; 2025–2026 ЛОРдок. Все права защищены.
+  </div>
+</footer>
+
+</body>
+</html>
