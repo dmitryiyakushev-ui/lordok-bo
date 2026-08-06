@@ -61,6 +61,10 @@ LEVEL_GREEN = "green"
 LEVEL_YELLOW = "yellow"
 LEVEL_RED = "red"
 
+# Сколько тревожных признаков рядом с температурой выше 39 переводят
+# оценку в красную. Решение Дмитрия от 06.08.2026: одного достаточно.
+HIGH_FEVER_RED_SIGNALS = 1
+
 # Nosologies where ARVI expected pattern logic applies.
 _ARVI_NOSOLOGIES = frozenset({
     "ars",
@@ -188,23 +192,28 @@ def _count_soft_alarm_signals(symptoms: dict) -> int:
     """Count the number of 'soft alarm' signals in the symptom set.
 
     Soft alarm signals (each counts as 1):
-    - Any severity_0_3 param == 3 (severe)
+    - Each severity_0_3 param == 3 (severe)
     - Any pain param >= 2 with poor analgesic response (analgesic >= 2)
     - Poor antipyretic response (antipyretic >= 2)
     - Fever duration >= 2 (5-7 days)
     - Purulent discharge (discharge == 3)
+
+    v3 (август 2026): каждый тяжёлый симптом считается отдельно. Раньше
+    цикл обрывался на первом, и «сильная боль плюс полная заложенность
+    плюс гнойное отделяемое» весило столько же, сколько один симптом.
     """
     count = 0
 
-    # Severe symptoms (value == 3, excluding temp/duration/response params)
+    # Severe symptoms (value == 3, excluding temp/duration/response params).
+    # Отделяемое исключено: у него ниже свой блок, иначе гнойное
+    # отделяемое считалось бы дважды.
     skip_suffixes = ("_temp", "_fever_duration", "_antipyretic", "_analgesic",
                      "_duration", "_vas", "_bilateral", "_cough", "_exudate",
-                     "_lymph", "_age")
+                     "_lymph", "_age", "_discharge")
     for k, v in symptoms.items():
         if isinstance(v, (int, float)) and v == 3:
             if not any(k.endswith(s) for s in skip_suffixes):
                 count += 1
-                break  # count max 1 for "any severe symptom"
 
     # Poor antipyretic response
     antipyretic_keys = [k for k in symptoms if k.endswith("_antipyretic")]
@@ -255,19 +264,20 @@ def _evaluate_soft_alarms(
     has_rapid_det = RF_RAPID_DETERIORATION in soft_alarms
 
     # -- High fever contextual logic --
-    # temp >39 + >=2 soft alarm signals -> RED
-    # temp >39 + 1 soft alarm signal -> YELLOW
-    # temp >39 alone -> YELLOW (no longer auto-RED)
+    # temp >39 + >=1 soft alarm signal -> RED
+    # temp >39 alone -> YELLOW (не auto-RED: обычная вирусная инфекция
+    #                          с высокой температурой и без других
+    #                          признаков не повод гнать к врачу сегодня)
     if has_high_fever:
         n_signals = _count_soft_alarm_signals(symptoms)
-        if n_signals >= 2:
+        if n_signals >= HIGH_FEVER_RED_SIGNALS:
             return (
                 LEVEL_RED,
-                "Высокая температура в сочетании с несколькими тревожными признаками. "
+                "Высокая температура в сочетании с тревожными признаками. "
                 "Рекомендуем обратиться к врачу сегодня.",
                 result_flags,
             )
-        # n_signals 0 or 1 -> YELLOW (handled below)
+        # без других признаков -> YELLOW (handled below)
 
     # -- Rapid deterioration contextual filter --
     # If duration < 5 days AND composite < 10 AND no high fever:
