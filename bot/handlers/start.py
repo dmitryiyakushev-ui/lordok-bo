@@ -19,10 +19,11 @@ Legacy path:
 """
 
 import logging
+import re
 from datetime import datetime, time, timezone
 
 from aiogram import F, Router
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandObject, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import CallbackQuery, Contact, InlineKeyboardButton, InlineKeyboardMarkup, Message
@@ -49,11 +50,27 @@ from bot.keyboards.reply import (
 )
 from bot.models.patient import Patient
 from bot.models.user import User
+from bot.services.analytics import log_event
 from bot.utils.demographics import compute_dob, format_age_ru
 from bot.utils.phone import normalize_phone
 
 logger = logging.getLogger(__name__)
 router = Router()
+
+# Deep-link payload: t.me/<bot>?start=<source>.
+# Telegram allows A-Z a-z 0-9 _ - up to 64 chars; anything else is dropped.
+_SOURCE_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
+SOURCE_DIRECT = "direct"
+
+
+def parse_source(payload: str | None) -> str:
+    """Normalize a /start payload into an acquisition source label."""
+    if not payload:
+        return SOURCE_DIRECT
+    candidate = payload.strip()
+    if not _SOURCE_RE.match(candidate):
+        return SOURCE_DIRECT
+    return candidate.lower()
 
 # Base URL for legal documents (update when domain is configured)
 SITE_URL = "http://5.42.101.251"
@@ -103,13 +120,29 @@ class OnboardingState(StatesGroup):
 
 
 @router.message(CommandStart())
-async def cmd_start(message: Message, state: FSMContext):
+async def cmd_start(message: Message, command: CommandObject, state: FSMContext):
     """Dispatch: new user → full flow, legacy user → resolution, onboarded → note."""
     await state.clear()
     user_id = message.from_user.id
+    source = parse_source(command.args)
 
     async with get_session() as session:
         user = await session.get(User, user_id)
+        # First capture wins: a later click from another link must not
+        # rewrite the source the user originally came from.
+        if user is not None and user.source is None and source != SOURCE_DIRECT:
+            user.source = source
+            user.updated_at = datetime.now(timezone.utc)
+
+    # Logged before the User row exists, so starts that never finish
+    # onboarding still show up in the funnel.
+    await log_event(
+        user_id=user_id,
+        event_type="start",
+        detail=source,
+        payload={"is_new": user is None},
+    )
+    await state.update_data(source=source)
 
     # Existing user with completed new-style profile
     if user and user.full_name and user.phone:
@@ -626,6 +659,11 @@ async def _save_current_patient(callback: CallbackQuery, state: FSMContext):
                 first_name=callback.from_user.first_name or "Пользователь",
                 full_name=data.get("full_name"),
                 phone=data.get("phone"),
+                source=(
+                    data.get("source")
+                    if data.get("source") != SOURCE_DIRECT
+                    else None
+                ),
                 language_code="ru",
                 reminder_time=time(20, 0),
                 created_at=datetime.now(timezone.utc),
@@ -814,6 +852,12 @@ async def handle_reminder_time(callback: CallbackQuery, state: FSMContext):
                 await rs.update_user_reminder(user)
             except Exception:
                 pass  # scheduler may not be ready yet; jobs load on next restart
+
+    await log_event(
+        user_id=user_id,
+        event_type="onboarding_done",
+        detail=data.get("source", SOURCE_DIRECT),
+    )
 
     time_str = f"{hour:02d}:{minute:02d}"
     await callback.message.answer(

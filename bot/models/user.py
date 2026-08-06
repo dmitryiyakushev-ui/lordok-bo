@@ -39,6 +39,10 @@ class User(Base):
     full_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     phone: Mapped[str | None] = mapped_column(String(32), nullable=True)
 
+    # Acquisition source — deep-link payload from the /start link
+    # (t.me/<bot>?start=<source>). Written once, never overwritten.
+    source: Mapped[str | None] = mapped_column(String(64), nullable=True)
+
     # Active patient pointer — which patient /log, /history, /report work with
     active_patient_id: Mapped[int | None] = mapped_column(
         Integer,

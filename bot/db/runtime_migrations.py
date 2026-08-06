@@ -77,6 +77,9 @@ async def run_runtime_migrations(engine: AsyncEngine) -> None:
             "FOREIGN KEY (active_patient_id) REFERENCES patients(id) ON DELETE SET NULL",
         )
 
+        # ── users: acquisition source (deep-link payload) ──
+        await _add_column_if_missing(conn, "users", "source", "VARCHAR(64)")
+
         # ── users: timezone ──
         await _add_column_if_missing(
             conn, "users", "user_tz", "VARCHAR(50) DEFAULT 'Europe/Moscow'"

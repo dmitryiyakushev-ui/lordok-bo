@@ -6,6 +6,9 @@ from typing import Optional
 
 from aiogram import Bot, Dispatcher, Router
 from aiogram.client.session.aiohttp import AiohttpSession
+from aiogram.fsm.storage.base import BaseStorage
+from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.types import BotCommand, Update
 from aiohttp_socks import ProxyConnector
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -84,6 +87,27 @@ class ProxiedAiohttpSession(AiohttpSession):
         await super().close()
 
 
+def _build_storage() -> BaseStorage:
+    """Build the FSM storage.
+
+    Redis by default: a container restart must not drop users in the
+    middle of onboarding or a diary session. MemoryStorage stays
+    available for local debugging without Redis (FSM_STORAGE=memory).
+    """
+    settings = get_settings()
+    logger = logging.getLogger(__name__)
+
+    if settings.fsm_storage.lower() == "memory":
+        logger.warning(
+            "FSM storage: memory — dialog state is lost on restart. "
+            "Use FSM_STORAGE=redis in production."
+        )
+        return MemoryStorage()
+
+    logger.info("FSM storage: redis")
+    return RedisStorage.from_url(settings.redis_url)
+
+
 async def setup_bot() -> tuple[Bot, Dispatcher, AsyncIOScheduler]:
     """Setup bot, dispatcher, and scheduler."""
     global _bot, _dp, _scheduler
@@ -97,7 +121,7 @@ async def setup_bot() -> tuple[Bot, Dispatcher, AsyncIOScheduler]:
         session = ProxiedAiohttpSession(proxy_url=settings.https_proxy)
         logger.info("Using proxy: %s (rdns=True)", settings.https_proxy)
     _bot = Bot(token=settings.bot_token, session=session)
-    _dp = Dispatcher()
+    _dp = Dispatcher(storage=_build_storage())
 
     # Initialize scheduler
     _scheduler = AsyncIOScheduler()
@@ -172,6 +196,10 @@ async def on_shutdown() -> None:
 
         await close_db()
         logger.info("Database connection closed")
+
+        if _dp is not None:
+            await _dp.storage.close()
+            logger.info("FSM storage closed")
 
         bot = get_bot()
         await bot.session.close()

@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
     timezone: str = Field(default="Europe/Moscow", alias="TIMEZONE")
     https_proxy: str = Field(default="", alias="HTTPS_PROXY")
+    fsm_storage: str = Field(default="redis", alias="FSM_STORAGE")
 
     @field_validator("admin_ids", mode="before")
     @classmethod
