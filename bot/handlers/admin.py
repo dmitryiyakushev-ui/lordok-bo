@@ -18,6 +18,7 @@ from bot.models.feedback import Feedback
 from bot.models.patient import Patient
 from bot.models.symptom import SymptomEntry
 from bot.models.user import User
+from bot.services.metrics import collect_funnel, format_funnel
 
 logger = logging.getLogger(__name__)
 router = Router()
@@ -96,6 +97,8 @@ async def cmd_stats(message: Message):
             select(func.count()).select_from(Feedback)
         )).scalar() or 0
 
+        funnel = await collect_funnel(session, now)
+
         avg_rating = (await session.execute(
             select(func.avg(Feedback.rating))
         )).scalar()
@@ -150,6 +153,9 @@ async def cmd_stats(message: Message):
         lines.append("🏥 Топ нозологий (30д):")
         for noso, cnt in noso_rows:
             lines.append(f"  {noso}: {cnt}")
+
+    lines.append("")
+    lines.extend(format_funnel(funnel))
 
     lines.append("")
     lines.append(
