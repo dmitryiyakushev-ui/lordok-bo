@@ -64,6 +64,7 @@ from bot.models.patient import Patient
 from bot.models.symptom import SymptomEntry
 from bot.models.scale_score import ScaleScore
 from bot.models.user import User
+from bot.services.notes_scan import scan_notes
 from bot.services.episodes import (
     register_episode,
     tonsillectomy_criteria_met,
@@ -644,67 +645,6 @@ async def handle_red_flag_response(callback: CallbackQuery, state: FSMContext):
 # Free-text notes step ("Хотите что-то дополнить?")
 # ──────────────────────────────────────────────────────────────────────
 
-# Keywords in patient free-text that should escalate triage.
-# Grouped by severity: RED triggers immediate red-flag routing,
-# YELLOW bumps the level to at least yellow.
-_ESCALATION_KEYWORDS_RED: list[list[str]] = [
-    # Each inner list is an OR-group: any word in the group triggers.
-    ["не могу дышать", "задыхаюсь", "удушье"],
-    ["потеря сознания", "теряю сознание", "обморок"],
-    ["не могу глотать", "невозможно глотать"],
-    ["не могу открыть рот"],
-    ["кровотечение", "сильное кровотечение", "кровь течёт", "кровь течет"],
-    ["скорая", "реанимация"],
-    ["судороги"],
-    ["отек горла", "отёк горла", "горло отекло"],
-]
-
-_ESCALATION_KEYWORDS_YELLOW: list[list[str]] = [
-    ["стало хуже", "ухудшение", "резко ухудшил"],
-    ["гной", "гнойные"],
-    ["не помогает лечение", "лечение не помогает", "антибиотик не помогает"],
-    ["сильная боль", "невыносимая боль", "очень сильная боль"],
-    ["температура не снижается", "температура не сбивается", "жаропонижающее не помогает"],
-    ["рвота", "тошнота"],
-    ["отёк лица", "отек лица", "опухло лицо", "опухла щека"],
-    ["шум в ухе", "шум в ушах", "звон в ушах"],
-    ["головокружение", "кружится голова"],
-    ["кровь из уха", "кровь из носа"],
-]
-
-
-def _analyze_user_notes(text: str) -> tuple[str | None, list[str]]:
-    """Scan free-text for alarm keywords.
-
-    Returns
-    -------
-    (escalation_level, matched_phrases)
-        escalation_level: "red", "yellow", or None
-        matched_phrases:  list of matched keyword phrases for logging
-    """
-    if not text:
-        return None, []
-
-    lower = text.lower()
-    matched: list[str] = []
-
-    for group in _ESCALATION_KEYWORDS_RED:
-        for kw in group:
-            if kw in lower:
-                matched.append(kw)
-                return "red", matched
-
-    for group in _ESCALATION_KEYWORDS_YELLOW:
-        for kw in group:
-            if kw in lower:
-                matched.append(kw)
-
-    if matched:
-        return "yellow", matched
-
-    return None, []
-
-
 def _skip_notes_keyboard() -> InlineKeyboardMarkup:
     """Inline keyboard with a single 'Пропустить' button."""
     return InlineKeyboardMarkup(
@@ -743,7 +683,7 @@ async def handle_notes_text(message: Message, state: FSMContext):
     await state.update_data(user_notes=text)
 
     # Keyword analysis — may escalate triage level later in _process_triage
-    escalation, matched = _analyze_user_notes(text)
+    escalation, matched = scan_notes(text)
     if escalation:
         await state.update_data(
             notes_escalation=escalation,
