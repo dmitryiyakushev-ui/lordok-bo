@@ -30,7 +30,10 @@ depends_on = None
 def upgrade() -> None:
     conn = op.get_bind()
     Base.metadata.create_all(bind=conn, checkfirst=True)
-    catch_up(conn)
+    # Догоняющие правки написаны на information_schema, то есть только
+    # для Postgres. На свежей базе другого диалекта их нечего догонять.
+    if conn.dialect.name == "postgresql":
+        catch_up(conn)
 
 
 def downgrade() -> None:

@@ -59,9 +59,11 @@ async def _add_entries(session, user, patient, day_offsets):
 
 async def test_activation_and_retention(db):
     async with db() as session:
-        # Дошёл до активации: три дня записей в первую неделю, вернулся на 7-й
+        # Дошёл до активации: три дня записей внутри первой недели
+        # (окно это дни 0-6, седьмой день в него уже не входит),
+        # плюс вернулся на 7-й день для retention
         user_a, patient_a = await _add_user(session, 1, days_ago=40, source="reels")
-        await _add_entries(session, user_a, patient_a, [0, 1, 7])
+        await _add_entries(session, user_a, patient_a, [0, 1, 3, 7])
 
         # Записался один раз и пропал
         user_b, patient_b = await _add_user(session, 2, days_ago=40)
