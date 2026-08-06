@@ -331,7 +331,7 @@ class ReminderScheduler:
                 red = levels.count("red")
 
                 text = (
-                    f"📅 Итоги недели — {patient.display_name}\n\n"
+                    f"📅 Итоги недели: {patient.display_name}\n\n"
                     f"Заполнено дней: {len(days)} из 7\n"
                     f"Оценки: 🟢 {green} · 🟡 {yellow} · 🔴 {red}\n\n"
                 )

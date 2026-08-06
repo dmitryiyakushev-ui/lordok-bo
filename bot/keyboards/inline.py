@@ -41,9 +41,9 @@ def nosology_keyboard() -> InlineKeyboardMarkup:
 def complaint_area_keyboard() -> InlineKeyboardMarkup:
     """Complaint area selection (for patients WITHOUT diagnosis)."""
     buttons = [
-        [InlineKeyboardButton(text="👃 Нос — заложенность, выделения", callback_data="complaint:nose")],
-        [InlineKeyboardButton(text="🗣 Горло — боль, першение", callback_data="complaint:throat")],
-        [InlineKeyboardButton(text="👂 Ухо — боль, снижение слуха", callback_data="complaint:ear")],
+        [InlineKeyboardButton(text="👃 Нос: заложенность, выделения", callback_data="complaint:nose")],
+        [InlineKeyboardButton(text="🗣 Горло: боль, першение", callback_data="complaint:throat")],
+        [InlineKeyboardButton(text="👂 Ухо: боль, снижение слуха", callback_data="complaint:ear")],
         [InlineKeyboardButton(text="📋 Несколько областей", callback_data="complaint:multiple")],
         [InlineKeyboardButton(text="🩺 Это не ЛОР-проблема", callback_data="complaint:non_ent")],
     ]

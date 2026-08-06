@@ -171,7 +171,7 @@ async def cmd_stats(message: Message):
             date_str = created_at.strftime("%d.%m")
             text_preview = ""
             if comment:
-                text_preview = f' — "{comment[:60]}{"…" if len(comment) > 60 else ""}"'
+                text_preview = f': "{comment[:60]}{"…" if len(comment) > 60 else ""}"'
             lines.append(f"  {date_str} {stars}{text_preview}")
 
     await message.answer("\n".join(lines))

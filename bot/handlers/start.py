@@ -315,8 +315,8 @@ async def handle_full_name(message: Message, state: FSMContext):
     await state.update_data(full_name=raw)
     await message.answer(
         f"Спасибо, {raw}.\n\n"
-        "Теперь, пожалуйста, поделитесь номером телефона — "
-        "для связи и восстановления доступа. "
+        "Теперь, пожалуйста, поделитесь номером телефона. "
+        "Он нужен для связи и восстановления доступа. "
         "Нажмите кнопку ниже или введите номер вручную.",
         reply_markup=request_contact_keyboard(),
     )
@@ -480,7 +480,7 @@ async def handle_legacy_resolution(callback: CallbackQuery, state: FSMContext):
         child_pending=True,
     )
     await callback.message.answer(
-        "Понял — старые данные отнесены к ребёнку (сохранены в истории, "
+        "Понял, старые данные отнесены к ребёнку (сохранены в истории, "
         "но больше не активны). Давайте заведём профиль ребёнка заново."
     )
     await _start_child_collection(callback.message, state)
@@ -509,7 +509,7 @@ async def handle_legacy_self_age(message: Message, state: FSMContext):
     pretty = format_age_ru(dob)
     await state.update_data(current_months=0, current_dob_iso=dob.isoformat())
     await message.answer(
-        f"Проверим: возраст — {pretty}. Всё верно?",
+        f"Проверим возраст: {pretty}. Всё верно?",
         reply_markup=age_confirm_keyboard(),
     )
     await state.set_state(OnboardingState.patient_confirming_age)
@@ -636,7 +636,7 @@ async def handle_years(message: Message, state: FSMContext):
     pretty = format_age_ru(dob)
     await state.update_data(current_months=0, current_dob_iso=dob.isoformat())
     await message.answer(
-        f"Проверим: возраст — {pretty}. Всё верно?",
+        f"Проверим возраст: {pretty}. Всё верно?",
         reply_markup=age_confirm_keyboard(),
     )
     await state.set_state(OnboardingState.patient_confirming_age)
@@ -964,7 +964,7 @@ async def handle_reminder_time(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(
         "✅ Всё готово.\n\n"
         f"🔔 Напоминание: {time_str}\n\n"
-        "Меню внизу экрана — чтобы быстро перейти к дневнику, истории, "
+        "Меню внизу экрана поможет быстро перейти к дневнику, истории, "
         "пациентам или настройкам.",
         reply_markup=main_menu_keyboard(),
     )

@@ -97,7 +97,7 @@ def run_triage(
     if symptoms.get("unilateral_symptoms") == 1 and symptoms.get("bloody_discharge") == 1:
         return {
             "triage_level": LEVEL_YELLOW,
-            "triage_message": "Односторонние симптомы с кровянистым отделяемым. Исключите другую патологию — запишитесь к врачу.",
+            "triage_message": "Односторонние симптомы с кровянистым отделяемым. Исключите другую патологию, запишитесь к врачу.",
         }
 
     # Worsening trend (any VAS)

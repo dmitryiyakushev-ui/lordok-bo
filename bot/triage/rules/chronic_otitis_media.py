@@ -57,14 +57,14 @@ def run_triage(
     if com_vertigo >= 2:
         return {
             "triage_level": LEVEL_RED,
-            "triage_message": "Головокружение с хроническим отитом — возможна лабиринтная фистула. Требуется срочное обследование.",
+            "triage_message": "Головокружение с хроническим отитом: возможна лабиринтная фистула. Требуется срочное обследование.",
         }
 
     # Foul-smelling or bloody discharge (cholesteatoma risk)
     if com_discharge == 3:
         return {
             "triage_level": LEVEL_RED,
-            "triage_message": "Зловонное или кровянистое отделяемое. Исключите холестеатому — срочно к врачу.",
+            "triage_message": "Зловонное или кровянистое отделяемое. Исключите холестеатому, срочно к врачу.",
         }
 
     # Facial nerve involvement (CN VII palsy)

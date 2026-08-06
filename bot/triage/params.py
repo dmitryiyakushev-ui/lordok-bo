@@ -90,11 +90,11 @@ ARS_PARAMS: list[dict[str, Any]] = [
     {"id": "ars_smell", "label_ru": "Стали хуже чувствовать запахи?", "scale_type": "severity_0_3"},
 ]
 ARS_RED_FLAGS: list[dict[str, Any]] = [
-    {"id": "periorbital_edema", "question_ru": "Есть заметный отёк вокруг одного глаза — кожа покраснела и/или горячая на ощупь?"},
+    {"id": "periorbital_edema", "question_ru": "Есть заметный отёк вокруг одного глаза, кожа покраснела или горячая на ощупь?"},
     {"id": "visual_disturbance", "question_ru": "Стало хуже видеть, двоится в глазах или появилось ощущение давления на глаз изнутри?"},
-    {"id": "neck_stiffness", "question_ru": "Шея стала жёсткой — не получается наклонить голову вперёд и прижать подбородок к груди?"},
-    {"id": "severe_headache", "question_ru": "Появилась резкая, очень сильная головная боль, которой раньше не было — не похожая на обычную?", "scale": "severity"},
-    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность, спутанность — трудно сосредоточиться, путаете слова или слишком сонливы?"},
+    {"id": "neck_stiffness", "question_ru": "Шея стала жёсткой, не получается наклонить голову вперёд и прижать подбородок к груди?"},
+    {"id": "severe_headache", "question_ru": "Появилась резкая, очень сильная головная боль, которой раньше не было, не похожая на обычную?", "scale": "severity"},
+    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность или спутанность: трудно сосредоточиться, путаете слова или слишком сонливы?"},
     {"id": "rapid_deterioration", "question_ru": "За последние сутки стало значительно хуже, чем было вчера?"},
 ]
 
@@ -118,7 +118,7 @@ CRS_PARAMS: list[dict[str, Any]] = [
         "show_if": {"param": "crs_temp", "gte": 1},
     },
     {"id": "crs_sleep", "label_ru": "Мешают ли симптомы спать?", "scale_type": "severity_0_3"},
-    {"id": "crs_vas", "label_ru": "Оцените общую тяжесть симптомов сегодня (0 — нет, 10 — невыносимо)", "scale_type": "vas_0_10"},
+    {"id": "crs_vas", "label_ru": "Оцените общую тяжесть симптомов сегодня, где 0 это нет, а 10 невыносимо", "scale_type": "vas_0_10"},
     {"id": "crs_obstruction", "label_ru": "Насколько заложен нос?", "scale_type": "severity_0_3"},
     {"id": "crs_discharge", "label_ru": "Какие выделения из носа?", "scale_type": "discharge"},
     {"id": "crs_facial_pain", "label_ru": "Боль или давление в области лица", "scale_type": "severity_0_3", "is_pain": True},
@@ -134,9 +134,9 @@ CRS_PARAMS: list[dict[str, Any]] = [
     {"id": "crs_systemic_course", "label_ru": "Получали ли вы курс системных ГКС или антибиотиков за последние 2 недели?", "scale_type": "binary"},
 ]
 CRS_RED_FLAGS: list[dict[str, Any]] = [
-    {"id": "periorbital_edema", "question_ru": "Есть заметный отёк вокруг одного глаза — кожа покраснела и/или горячая на ощупь?"},
+    {"id": "periorbital_edema", "question_ru": "Есть заметный отёк вокруг одного глаза, кожа покраснела или горячая на ощупь?"},
     {"id": "visual_disturbance", "question_ru": "Стало хуже видеть, двоится в глазах или появилось ощущение давления на глаз изнутри?"},
-    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность, спутанность — трудно сосредоточиться, путаете слова или слишком сонливы?"},
+    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность или спутанность: трудно сосредоточиться, путаете слова или слишком сонливы?"},
     {"id": "rapid_deterioration", "question_ru": "За последние сутки стало значительно хуже, чем было вчера?"},
 ]
 
@@ -178,11 +178,11 @@ TP_PARAMS: list[dict[str, Any]] = [
     {"id": "tp_lymph", "label_ru": "Есть увеличенные болезненные лимфоузлы на шее под челюстью?", "scale_type": "binary"},
 ]
 TP_RED_FLAGS: list[dict[str, Any]] = [
-    {"id": "trismus", "question_ru": "Не получается открыть рот так же широко, как обычно — челюсть «заклинило»?"},
+    {"id": "trismus", "question_ru": "Не получается открыть рот так же широко, как обычно, челюсть «заклинило»?"},
     {"id": "uvular_deviation", "question_ru": "Если посмотреть в зеркало: одна сторона горла заметно больше другой или язычок смещён в сторону?"},
-    {"id": "drooling", "question_ru": "Слюна скапливается — не получается её проглотить?"},
+    {"id": "drooling", "question_ru": "Слюна скапливается, не получается её проглотить?"},
     {"id": "neck_swelling", "question_ru": "Появился плотный отёк или уплотнение на шее сбоку или спереди?"},
-    {"id": "stridor", "question_ru": "Стало тяжело дышать — слышен свист, хрип или ощущение, что воздух с трудом проходит?"},
+    {"id": "stridor", "question_ru": "Стало тяжело дышать: слышен свист, хрип или ощущение, что воздух с трудом проходит?"},
     {"id": "rapid_deterioration", "question_ru": "За последние сутки стало значительно хуже, чем было вчера?"},
 ]
 
@@ -224,11 +224,11 @@ AOM_PARAMS: list[dict[str, Any]] = [
     {"id": "aom_bilateral", "label_ru": "Болят оба уха?", "scale_type": "binary"},
 ]
 AOM_RED_FLAGS: list[dict[str, Any]] = [
-    {"id": "postauricular_swelling", "question_ru": "Есть припухлость или покраснение на кости за ушной раковиной — болезненная при нажатии?"},
-    {"id": "protruding_pinna", "question_ru": "Ушная раковина стала оттопыриваться больше обычного — заметно при взгляде в зеркало?"},
-    {"id": "facial_nerve_palsy", "question_ru": "Одна сторона лица стала менее подвижной — трудно улыбнуться, закрыть глаз или надуть щёку?"},
-    {"id": "neck_stiffness", "question_ru": "Шея стала жёсткой — не получается наклонить голову вперёд и прижать подбородок к груди?"},
-    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность, спутанность — трудно сосредоточиться, путаете слова или слишком сонливы?"},
+    {"id": "postauricular_swelling", "question_ru": "Есть припухлость или покраснение на кости за ушной раковиной, болезненная при нажатии?"},
+    {"id": "protruding_pinna", "question_ru": "Ушная раковина стала оттопыриваться больше обычного, это заметно при взгляде в зеркало?"},
+    {"id": "facial_nerve_palsy", "question_ru": "Одна сторона лица стала менее подвижной: трудно улыбнуться, закрыть глаз или надуть щёку?"},
+    {"id": "neck_stiffness", "question_ru": "Шея стала жёсткой, не получается наклонить голову вперёд и прижать подбородок к груди?"},
+    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность или спутанность: трудно сосредоточиться, путаете слова или слишком сонливы?"},
     {"id": "rapid_deterioration", "question_ru": "За последние сутки стало значительно хуже, чем было вчера?"},
 ]
 
@@ -255,11 +255,11 @@ COM_PARAMS: list[dict[str, Any]] = [
     },
 ]
 COM_RED_FLAGS: list[dict[str, Any]] = [
-    {"id": "com_vertigo", "question_ru": "Появилось сильное головокружение — ощущение, что всё вокруг вращается (не просто лёгкая неустойчивость)?", "persist_as_symptom": True},
-    {"id": "facial_asymmetry", "question_ru": "Одна сторона лица стала менее подвижной — трудно улыбнуться или закрыть глаз?", "persist_as_symptom": True},
-    {"id": "postauricular_swelling", "question_ru": "Есть припухлость или покраснение на кости за ушной раковиной — болезненная при нажатии?"},
+    {"id": "com_vertigo", "question_ru": "Появилось сильное головокружение, ощущение, что всё вокруг вращается (не просто лёгкая неустойчивость)?", "persist_as_symptom": True},
+    {"id": "facial_asymmetry", "question_ru": "Одна сторона лица стала менее подвижной: трудно улыбнуться или закрыть глаз?", "persist_as_symptom": True},
+    {"id": "postauricular_swelling", "question_ru": "Есть припухлость или покраснение на кости за ушной раковиной, болезненная при нажатии?"},
     {"id": "protruding_pinna", "question_ru": "Ушная раковина стала оттопыриваться больше обычного?"},
-    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность, спутанность — трудно сосредоточиться, путаете слова или слишком сонливы?"},
+    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность или спутанность: трудно сосредоточиться, путаете слова или слишком сонливы?"},
     {"id": "rapid_deterioration", "question_ru": "За последние сутки стало значительно хуже, чем было вчера?"},
 ]
 # Note: com_vertigo and facial_asymmetry are both *asked as red flags*
@@ -295,9 +295,9 @@ AH_PARAMS: list[dict[str, Any]] = [
     },
 ]
 AH_RED_FLAGS: list[dict[str, Any]] = [
-    {"id": "ah_apnea", "question_ru": "Вы замечали, что ребёнок перестаёт дышать во сне — даже на несколько секунд — а потом шумно вздыхает?", "persist_as_symptom": True},
+    {"id": "ah_apnea", "question_ru": "Вы замечали, что ребёнок перестаёт дышать во сне, пусть даже на несколько секунд, а потом шумно вздыхает?", "persist_as_symptom": True},
     {"id": "failure_to_thrive", "question_ru": "Ребёнок плохо набирает вес или заметно отстаёт в росте по сравнению со сверстниками?", "persist_as_symptom": True},
-    {"id": "behavioral_regression", "question_ru": "Появились новые проблемы с поведением, вниманием или развитием — то, чего раньше не было?", "persist_as_symptom": True},
+    {"id": "behavioral_regression", "question_ru": "Появились новые проблемы с поведением, вниманием или развитием, чего раньше не было?", "persist_as_symptom": True},
     {"id": "stridor", "question_ru": "В покое (не во время простуды) слышно шумное или свистящее дыхание?"},
 ]
 
@@ -416,39 +416,39 @@ UND_MULTIPLE_PARAMS: list[dict[str, Any]] = [
 # plus universal safety flags (altered_consciousness, rapid_deterioration).
 
 UND_NOSE_RED_FLAGS: list[dict[str, Any]] = [
-    {"id": "periorbital_edema", "question_ru": "Есть заметный отёк вокруг одного глаза — кожа покраснела и/или горячая на ощупь?"},
+    {"id": "periorbital_edema", "question_ru": "Есть заметный отёк вокруг одного глаза, кожа покраснела или горячая на ощупь?"},
     {"id": "visual_disturbance", "question_ru": "Стало хуже видеть, двоится в глазах или появилось ощущение давления на глаз изнутри?"},
     {"id": "bloody_discharge", "question_ru": "Есть кровянистые или бурые выделения из носа (не просто прожилки при сморкании)?", "persist_as_symptom": True},
-    {"id": "neck_stiffness", "question_ru": "Шея стала жёсткой — не получается наклонить голову вперёд и прижать подбородок к груди?"},
-    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность, спутанность — трудно сосредоточиться, путаете слова или слишком сонливы?"},
+    {"id": "neck_stiffness", "question_ru": "Шея стала жёсткой, не получается наклонить голову вперёд и прижать подбородок к груди?"},
+    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность или спутанность: трудно сосредоточиться, путаете слова или слишком сонливы?"},
     {"id": "rapid_deterioration", "question_ru": "За последние сутки стало значительно хуже, чем было вчера?"},
 ]
 
 UND_THROAT_RED_FLAGS: list[dict[str, Any]] = [
-    {"id": "stridor", "question_ru": "Стало тяжело дышать — слышен свист, хрип или ощущение, что воздух с трудом проходит?"},
-    {"id": "dysphagia", "question_ru": "Совсем не получается глотать — даже слюну?", "persist_as_symptom": True},
-    {"id": "trismus", "question_ru": "Не получается открыть рот так же широко, как обычно — челюсть «заклинило»?"},
+    {"id": "stridor", "question_ru": "Стало тяжело дышать: слышен свист, хрип или ощущение, что воздух с трудом проходит?"},
+    {"id": "dysphagia", "question_ru": "Совсем не получается глотать, даже слюну?", "persist_as_symptom": True},
+    {"id": "trismus", "question_ru": "Не получается открыть рот так же широко, как обычно, челюсть «заклинило»?"},
     {"id": "neck_swelling", "question_ru": "Появился плотный отёк или уплотнение на шее сбоку или спереди?"},
-    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность, спутанность — трудно сосредоточиться, путаете слова или слишком сонливы?"},
+    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность или спутанность: трудно сосредоточиться, путаете слова или слишком сонливы?"},
     {"id": "rapid_deterioration", "question_ru": "За последние сутки стало значительно хуже, чем было вчера?"},
 ]
 
 UND_EAR_RED_FLAGS: list[dict[str, Any]] = [
-    {"id": "postauricular_swelling", "question_ru": "Есть припухлость или покраснение на кости за ушной раковиной — болезненная при нажатии?"},
-    {"id": "facial_nerve_palsy", "question_ru": "Одна сторона лица стала менее подвижной — трудно улыбнуться, закрыть глаз или надуть щёку?"},
+    {"id": "postauricular_swelling", "question_ru": "Есть припухлость или покраснение на кости за ушной раковиной, болезненная при нажатии?"},
+    {"id": "facial_nerve_palsy", "question_ru": "Одна сторона лица стала менее подвижной: трудно улыбнуться, закрыть глаз или надуть щёку?"},
     {"id": "bloody_discharge", "question_ru": "Есть кровянистые выделения из уха (не после чистки)?", "persist_as_symptom": True},
-    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность, спутанность — трудно сосредоточиться, путаете слова или слишком сонливы?"},
+    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность или спутанность: трудно сосредоточиться, путаете слова или слишком сонливы?"},
     {"id": "rapid_deterioration", "question_ru": "За последние сутки стало значительно хуже, чем было вчера?"},
 ]
 
 UND_MULTIPLE_RED_FLAGS: list[dict[str, Any]] = [
-    {"id": "stridor", "question_ru": "Стало тяжело дышать — слышен свист, хрип или ощущение, что воздух с трудом проходит?"},
-    {"id": "periorbital_edema", "question_ru": "Есть заметный отёк вокруг одного глаза — кожа покраснела и/или горячая на ощупь?"},
+    {"id": "stridor", "question_ru": "Стало тяжело дышать: слышен свист, хрип или ощущение, что воздух с трудом проходит?"},
+    {"id": "periorbital_edema", "question_ru": "Есть заметный отёк вокруг одного глаза, кожа покраснела или горячая на ощупь?"},
     {"id": "visual_disturbance", "question_ru": "Стало хуже видеть, двоится в глазах или появилось ощущение давления на глаз изнутри?"},
-    {"id": "dysphagia", "question_ru": "Совсем не получается глотать — даже слюну?", "persist_as_symptom": True},
+    {"id": "dysphagia", "question_ru": "Совсем не получается глотать, даже слюну?", "persist_as_symptom": True},
     {"id": "bloody_discharge", "question_ru": "Есть кровянистые выделения из носа или уха (не просто прожилки при сморкании)?", "persist_as_symptom": True},
-    {"id": "facial_nerve_palsy", "question_ru": "Одна сторона лица стала менее подвижной — трудно улыбнуться, закрыть глаз или надуть щёку?"},
-    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность, спутанность — трудно сосредоточиться, путаете слова или слишком сонливы?"},
+    {"id": "facial_nerve_palsy", "question_ru": "Одна сторона лица стала менее подвижной: трудно улыбнуться, закрыть глаз или надуть щёку?"},
+    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность или спутанность: трудно сосредоточиться, путаете слова или слишком сонливы?"},
     {"id": "rapid_deterioration", "question_ru": "За последние сутки стало значительно хуже, чем было вчера?"},
 ]
 
@@ -461,7 +461,7 @@ UND_RED_FLAG_VALUE_OVERRIDES = {"dysphagia": 3}
 # ══════════════════════════════════════════════════════════════════════
 NON_ENT_PARAMS: list[dict[str, Any]] = [
     {"id": "ne_temp", "label_ru": "Какая у вас температура?", "scale_type": "temp"},
-    {"id": "ne_overall_severity", "label_ru": "Оцените общую тяжесть симптомов сегодня (0 — нет, 10 — невыносимо)", "scale_type": "vas_0_10"},
+    {"id": "ne_overall_severity", "label_ru": "Оцените общую тяжесть симптомов сегодня, где 0 это нет, а 10 невыносимо", "scale_type": "vas_0_10"},
     {"id": "ne_sleep", "label_ru": "Мешают ли симптомы спать?", "scale_type": "severity_0_3"},
     {"id": "ne_activity", "label_ru": "Приходится ли ограничивать обычные дела?", "scale_type": "severity_0_3"},
     {"id": "ne_duration", "label_ru": "Сколько дней беспокоят симптомы?", "scale_type": "duration", "first_visit_only": True},
@@ -469,8 +469,8 @@ NON_ENT_PARAMS: list[dict[str, Any]] = [
 # Only life-threatening signs here — since the app declared it doesn't
 # analyse ENT-specific red flags for this pathway.
 NON_ENT_RED_FLAGS: list[dict[str, Any]] = [
-    {"id": "stridor", "question_ru": "Стало тяжело дышать — слышен свист, хрип или ощущение, что воздух с трудом проходит?"},
-    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность, спутанность — трудно сосредоточиться, путаете слова или слишком сонливы?"},
+    {"id": "stridor", "question_ru": "Стало тяжело дышать: слышен свист, хрип или ощущение, что воздух с трудом проходит?"},
+    {"id": "altered_consciousness", "question_ru": "Появилась заторможенность или спутанность: трудно сосредоточиться, путаете слова или слишком сонливы?"},
     {"id": "rapid_deterioration", "question_ru": "За последние сутки стало значительно хуже, чем было вчера?"},
     {"id": "severe_chest_pain", "question_ru": "Появилась сильная боль в груди, или стало тяжело дышать в покое (без физической нагрузки)?", "persist_as_symptom": True},
 ]

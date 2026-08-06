@@ -99,7 +99,7 @@ def _build_storage() -> BaseStorage:
 
     if settings.fsm_storage.lower() == "memory":
         logger.warning(
-            "FSM storage: memory — dialog state is lost on restart. "
+            "FSM storage: memory, dialog state is lost on restart. "
             "Use FSM_STORAGE=redis in production."
         )
         return MemoryStorage()
@@ -174,7 +174,7 @@ async def on_startup() -> None:
         _reminder_scheduler = ReminderScheduler()
         bot = get_bot()
         await _reminder_scheduler.start(bot)
-        logger.info("ReminderScheduler started — user reminders loaded")
+        logger.info("ReminderScheduler started, user reminders loaded")
 
     except Exception as e:
         logger.error(f"Startup error: {e}")

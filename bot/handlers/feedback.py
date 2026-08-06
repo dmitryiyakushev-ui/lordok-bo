@@ -49,7 +49,7 @@ async def menu_premium(message: Message, state: FSMContext):
         "⭐ Спасибо за интерес!\n\n"
         "Раздел «Премиум» сейчас в разработке. "
         "Мы обязательно сообщим, когда он будет готов.\n\n"
-        "Если у вас есть пожелания — нажмите «💬 Обратная связь».",
+        "Если есть пожелания, нажмите «💬 Обратная связь».",
         reply_markup=main_menu_keyboard(),
     )
 
@@ -115,7 +115,7 @@ async def handle_rating(callback: CallbackQuery, state: FSMContext):
 
     await callback.message.answer(
         "Спасибо! Напишите, что понравилось, что нужно доработать, "
-        "чего не хватило — или нажмите «Пропустить».",
+        "чего не хватило. Или нажмите «Пропустить».",
         reply_markup=_skip_comment_keyboard(),
     )
     await state.set_state(FeedbackState.waiting_comment)

@@ -75,7 +75,7 @@ def _register_cyrillic_fonts() -> bool:
 
     if regular_path is None:
         logger.warning(
-            "DejaVu Sans TTF not found in any expected location — "
+            "DejaVu Sans TTF not found in any expected location, "
             "Cyrillic text in PDF reports will render as squares."
         )
         return False
@@ -96,7 +96,7 @@ def _register_cyrillic_fonts() -> bool:
     _FONTS_REGISTERED = True
     logger.info(
         "Registered Cyrillic fonts for PDF reports: regular=%s bold=%s",
-        regular_path, bold_path or "(missing — using regular for bold)",
+        regular_path, bold_path or "(missing, using regular for bold)",
     )
     return True
 
@@ -116,10 +116,10 @@ NOSOLOGY_LABELS = {
     "aom": "Острый средний отит",
     "com": "Хронический средний отит",
     "adenoid_hypertrophy": "Гипертрофия аденоидов",
-    "undiagnosed_nose": "Без диагноза — нос",
-    "undiagnosed_throat": "Без диагноза — горло",
-    "undiagnosed_ear": "Без диагноза — ухо",
-    "undiagnosed_multiple": "Без диагноза — несколько областей",
+    "undiagnosed_nose": "Без диагноза: нос",
+    "undiagnosed_throat": "Без диагноза: горло",
+    "undiagnosed_ear": "Без диагноза: ухо",
+    "undiagnosed_multiple": "Без диагноза: несколько областей",
     "non_ent": "Не ЛОР-проблема (дневник без анализа «красных флагов»)",
 }
 
@@ -383,7 +383,7 @@ async def generate_pdf_report(
         bottomMargin=15 * mm,
         leftMargin=18 * mm,
         rightMargin=18 * mm,
-        title="ЛОРдок — Отчёт для врача",
+        title="ЛОРдок: отчёт для врача",
         author="ЛОРдок",
     )
 
@@ -391,7 +391,7 @@ async def generate_pdf_report(
     now = datetime.now(timezone.utc)
 
     # ── Header ──────────────────────────────────────────────
-    story.append(Paragraph("ЛОРдок — Отчёт для врача", styles["ReportTitle"]))
+    story.append(Paragraph("ЛОРдок: отчёт для врача", styles["ReportTitle"]))
 
     nosology_label = NOSOLOGY_LABELS.get(user_data.get("nosology", ""), "—")
     age_label = AGE_LABELS.get(user_data.get("age_group", ""), "—")
@@ -500,7 +500,7 @@ async def generate_pdf_report(
 
             # Entry sub-header
             story.append(Paragraph(
-                f'<b>Запись {idx}</b> — {dt_str} '
+                f'<b>Запись {idx}</b>: {dt_str} '
                 f'(<font color="{triage_color.hexval()}">{triage_label}</font>)',
                 styles["BodyRu"],
             ))
@@ -734,7 +734,7 @@ async def generate_pdf_report(
     story.append(Spacer(1, 10 * mm))
     story.append(HRFlowable(width="100%", thickness=0.3, color=colors.lightgrey))
     story.append(Paragraph(
-        "ЛОРдок — информационный сервис для мониторинга симптомов. "
+        "ЛОРдок это информационный сервис для мониторинга симптомов. "
         "Не является медицинским изделием. "
         "Не предназначен для постановки диагноза или назначения лечения. "
         "При ухудшении состояния всегда обращайтесь к врачу.",

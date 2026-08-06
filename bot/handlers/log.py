@@ -135,7 +135,7 @@ NON_ENT_DISCLAIMER = (
     "ℹ️ Вы выбрали путь «Это не ЛОР-проблема».\n\n"
     "ЛОРдок будет вести дневник симптомов, но НЕ анализирует "
     "специфические «красные флаги» для не-ЛОР заболеваний. "
-    "При ухудшении состояния — обратитесь к терапевту, педиатру "
+    "При ухудшении состояния обратитесь к терапевту, педиатру "
     "или профильному врачу.\n\n"
     "Если у вас появятся угрожающие жизни признаки "
     "(затруднение дыхания, спутанность сознания, резкое ухудшение), "
@@ -373,7 +373,7 @@ async def _begin_collection(message: Message, state: FSMContext, patient: Patien
     if not symptom_params:
         await message.answer(
             f"❌ Для этого профиля ({nosology}) не найдены параметры. "
-            "Пожалуйста, напишите в поддержку — support@lordok.ru.",
+            "Пожалуйста, напишите в поддержку: support@lordok.ru.",
             reply_markup=main_menu_keyboard(),
         )
         return
@@ -800,7 +800,7 @@ async def _process_triage(message: Message, state: FSMContext):
             triage_text = (
                 "В вашем комментарии есть признаки, "
                 "требующие экстренного обращения к врачу. "
-                "Если состояние ухудшается — вызовите скорую помощь."
+                "Если состояние ухудшается, вызовите скорую помощь."
             )
         else:
             triage_text = (
@@ -978,7 +978,7 @@ async def _process_triage(message: Message, state: FSMContext):
 
     emoji = TRIAGE_LEVEL_EMOJI.get(str(level), "❓")
     lines = [
-        f"{emoji} Результат — {data.get('patient_display_name')}",
+        f"{emoji} Результат: {data.get('patient_display_name')}",
         f"Уровень: {str(level).upper()}",
     ]
     if triage_text:
@@ -1004,7 +1004,7 @@ async def _process_triage(message: Message, state: FSMContext):
     lines.append("")
     lines.append(
         "ℹ️ Это не медицинский диагноз. "
-        "Если симптомы усиливаются — обратитесь к ЛОР-врачу."
+        "Если симптомы усиливаются, обратитесь к ЛОР-врачу."
     )
 
     try:

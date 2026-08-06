@@ -121,7 +121,7 @@ def run_triage(
             "triage_level": LEVEL_RED,
             "triage_message": (
                 "Сильная боль при глотании с отеком шеи. "
-                "Исключите глубокую шейную инфекцию — срочно к врачу."
+                "Исключите глубокую шейную инфекцию, срочно к врачу."
             ),
             "centor_score": None,
             "centor_action": None,

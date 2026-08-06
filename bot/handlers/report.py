@@ -268,7 +268,7 @@ async def handle_period_selection(callback: CallbackQuery, state: FSMContext):
         )
         await callback.message.answer_document(
             doc,
-            caption=f"📊 Отчёт за {period_days} дней — {patient.display_name}",
+            caption=f"📊 Отчёт за {period_days} дней: {patient.display_name}",
         )
         # Separate trailing message so the main menu is visible.
         await callback.message.answer(

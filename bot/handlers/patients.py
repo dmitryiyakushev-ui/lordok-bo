@@ -55,10 +55,10 @@ NOSOLOGY_DISPLAY = {
     "aom": "Острый средний отит",
     "com": "Хронический средний отит",
     "adenoid_hypertrophy": "Гипертрофия аденоидов",
-    "undiagnosed_nose": "Без диагноза — нос",
-    "undiagnosed_throat": "Без диагноза — горло",
-    "undiagnosed_ear": "Без диагноза — ухо",
-    "undiagnosed_multiple": "Без диагноза — несколько областей",
+    "undiagnosed_nose": "Без диагноза: нос",
+    "undiagnosed_throat": "Без диагноза: горло",
+    "undiagnosed_ear": "Без диагноза: ухо",
+    "undiagnosed_multiple": "Без диагноза: несколько областей",
     "non_ent": "Не ЛОР-проблема (дневник, без анализа «красных флагов»)",
 }
 
@@ -464,7 +464,7 @@ async def add_picked_relation(callback: CallbackQuery, state: FSMContext):
     choice = callback.data.split(":")[1]
     if choice == "both":
         await callback.answer(
-            "За один раз можно добавить только одного. Сначала — кого именно?",
+            "За один раз можно добавить только одного. Сначала выберите, кого именно.",
             show_alert=True,
         )
         return
@@ -538,7 +538,7 @@ async def add_years(message: Message, state: FSMContext):
     dob = compute_dob(years, 0)
     await state.update_data(current_months=0, current_dob_iso=dob.isoformat())
     await message.answer(
-        f"Проверим: возраст — {format_age_ru(dob)}. Всё верно?",
+        f"Проверим возраст: {format_age_ru(dob)}. Всё верно?",
         reply_markup=age_confirm_keyboard(),
     )
     await state.set_state(PatientsState.add_confirming_age)

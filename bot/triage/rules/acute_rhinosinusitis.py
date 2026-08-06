@@ -95,7 +95,7 @@ def run_triage(
         if double_sickening:
             return {
                 "triage_level": LEVEL_YELLOW,
-                "triage_message": "Вторичное ухудшение после улучшения — признак бактериальной инфекции (EPOS 2020). Запишитесь к врачу.",
+                "triage_message": "Вторичное ухудшение после улучшения: признак бактериальной инфекции (EPOS 2020). Запишитесь к врачу.",
             }
 
         if trend == "improving" and composite_score <= 7:
@@ -107,7 +107,7 @@ def run_triage(
         if trend == "stable" and composite_score <= 10:
             return {
                 "triage_level": LEVEL_GREEN,
-                "triage_message": "Симптомы стабильны. Следите за их развитием. Если улучшения не будет к дню 10 — запишитесь к врачу.",
+                "triage_message": "Симптомы стабильны. Следите за их развитием. Если улучшения не будет к десятому дню, запишитесь к врачу.",
             }
 
         if trend == "worsening" or composite_score > 10:
@@ -130,7 +130,7 @@ def run_triage(
         if trend in ("stable", "worsening", "worsening_3d", "insufficient_data"):
             return {
                 "triage_level": LEVEL_YELLOW,
-                "triage_message": "Симптомы продолжаются более 10 дней без улучшения — показано обследование у ЛОР-врача (AAO-HNS).",
+                "triage_message": "Симптомы продолжаются более 10 дней без улучшения, показано обследование у ЛОР-врача (AAO-HNS).",
             }
 
     # Criterion 3: Fever + facial pain + purulent discharge
