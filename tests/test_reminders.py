@@ -3,7 +3,10 @@
 from datetime import datetime, time, timedelta, timezone
 
 import pytest
+from aiogram.exceptions import TelegramForbiddenError
+from aiogram.methods import SendMessage
 
+from bot.db.database import get_session
 from bot.models.patient import Patient
 from bot.models.symptom import SymptomEntry
 from bot.models.user import User
@@ -13,10 +16,16 @@ from bot.services.scheduler import ReminderScheduler
 class FakeBot:
     """Бот, который никуда не ходит, а записывает отправленное."""
 
-    def __init__(self):
+    def __init__(self, blocked_by=()):
         self.sent = []
+        self.blocked_by = set(blocked_by)
 
     async def send_message(self, chat_id, text, reply_markup=None):
+        if chat_id in self.blocked_by:
+            raise TelegramForbiddenError(
+                method=SendMessage(chat_id=chat_id, text=text),
+                message="Forbidden: bot was blocked by the user",
+            )
         self.sent.append((chat_id, text))
 
 
@@ -123,4 +132,27 @@ async def test_weekly_digest_counts_filled_days(db, scheduler):
 async def test_weekly_digest_skips_silent_week(db, scheduler):
     await _seed(db, entry_offsets=(20,))
     await scheduler._weekly_digest()
+    assert scheduler.bot.sent == []
+
+
+async def test_block_is_remembered_after_first_refusal(db, scheduler):
+    await _seed(db)
+    scheduler.bot.blocked_by = {100}
+
+    await scheduler._send_reminder(100)
+
+    async with get_session() as session:
+        user = await session.get(User, 100)
+        assert user.blocked_at is not None
+
+
+async def test_blocked_user_drops_out_of_mailings(db, scheduler):
+    await _seed(db, entry_offsets=(7,))
+    async with get_session() as session:
+        user = await session.get(User, 100)
+        user.blocked_at = datetime.now(timezone.utc)
+
+    await scheduler._reactivation_sweep()
+    await scheduler._weekly_digest()
+
     assert scheduler.bot.sent == []

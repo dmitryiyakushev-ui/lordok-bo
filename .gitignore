@@ -50,3 +50,6 @@ dist/
 backups/
 *.tar.gz
 *.sql.gz
+
+# AppleDouble-мусор macOS: ломает импорт ревизий alembic
+._*

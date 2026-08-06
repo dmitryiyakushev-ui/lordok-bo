@@ -39,7 +39,7 @@ from bot.services.analytics import log_event
 logger = logging.getLogger(__name__)
 router = Router()
 
-SITE_URL = "http://5.42.101.251"
+SITE_URL = "https://lor-dok.ru"
 
 
 def _confirm_keyboard() -> InlineKeyboardMarkup:

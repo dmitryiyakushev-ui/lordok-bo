@@ -51,6 +51,13 @@ class User(Base):
         DateTime(timezone=True), nullable=True
     )
 
+    # Когда Telegram сказал, что человек заблокировал бота. Пока стоит,
+    # плановые сообщения ему не отправляются. Снимается при первом же
+    # обращении пользователя.
+    blocked_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
     # Active patient pointer — which patient /log, /history, /report work with
     active_patient_id: Mapped[int | None] = mapped_column(
         Integer,

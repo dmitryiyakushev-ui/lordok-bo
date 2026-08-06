@@ -73,7 +73,7 @@ def parse_source(payload: str | None) -> str:
     return candidate.lower()
 
 # Base URL for legal documents (update when domain is configured)
-SITE_URL = "http://5.42.101.251"
+SITE_URL = "https://lor-dok.ru"
 
 # Редакция политики и соглашения, под которой пользователь ставит галочку.
 # Меняется вместе с текстом документов на сайте: тогда бот попросит
@@ -181,6 +181,22 @@ async def cmd_start(message: Message, command: CommandObject, state: FSMContext)
         if user is not None and user.source is None and source != SOURCE_DIRECT:
             user.source = source
             user.updated_at = datetime.now(timezone.utc)
+        # Человек вернулся, значит блокировки больше нет.
+        if user is not None and user.blocked_at is not None:
+            user.blocked_at = None
+            user.updated_at = datetime.now(timezone.utc)
+            unblocked = True
+        else:
+            unblocked = False
+
+    if unblocked:
+        # Напоминание снималось при блокировке, возвращаем его обратно.
+        try:
+            from bot.main import get_reminder_scheduler
+
+            await get_reminder_scheduler().update_user_reminder(user)
+        except Exception:
+            logger.warning("Could not restore reminder for %s", user_id, exc_info=True)
 
     # Logged before the User row exists, so starts that never finish
     # onboarding still show up in the funnel.

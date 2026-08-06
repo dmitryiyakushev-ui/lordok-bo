@@ -147,6 +147,8 @@ class ReminderScheduler:
         """Schedule a daily reminder for a specific user."""
         if not user.reminder_time:
             return
+        if user.blocked_at is not None:
+            return
 
         # reminder_time is a Python time object from SQLAlchemy
         if isinstance(user.reminder_time, str):
@@ -183,17 +185,29 @@ class ReminderScheduler:
         logger.debug(f"Scheduled reminder for user {user.id} at {hour:02d}:{minute:02d} ({user_tz_name})")
 
     async def _send(self, user_id: int, text: str, keyboard=None) -> bool:
-        """Send a message, swallowing the 'user blocked the bot' case."""
+        """Отправить сообщение и запомнить, если бота заблокировали."""
         try:
             await self.bot.send_message(
                 chat_id=user_id, text=text, reply_markup=keyboard
             )
             return True
         except TelegramForbiddenError:
-            logger.info("User %s blocked the bot — message skipped", user_id)
+            logger.info("User %s blocked the bot, plans cancelled", user_id)
+            await self._mark_blocked(user_id)
         except Exception as e:
             logger.error("Failed to send message to user %s: %s", user_id, e)
         return False
+
+    async def _mark_blocked(self, user_id: int) -> None:
+        """Пометить блокировку и снять запланированное напоминание."""
+        async with get_session() as session:
+            user = await session.get(User, user_id)
+            if user is not None and user.blocked_at is None:
+                user.blocked_at = datetime.now(timezone.utc)
+
+        job_id = f"reminder_{user_id}"
+        if self.scheduler.get_job(job_id):
+            self.scheduler.remove_job(job_id)
 
     async def _send_reminder(self, user_id: int):
         """Send the daily reminder unless it would be pointless.
@@ -252,6 +266,7 @@ class ReminderScheduler:
                     .join(Patient, Patient.id == User.active_patient_id)
                     .join(last_entry, last_entry.c.patient_id == Patient.id)
                     .where(Patient.case_closed_at.is_(None))
+                    .where(User.blocked_at.is_(None))
                 )
             ).all()
 
@@ -287,9 +302,10 @@ class ReminderScheduler:
         async with get_session() as session:
             rows = (
                 await session.execute(
-                    select(User, Patient).join(
-                        Patient, Patient.id == User.active_patient_id
-                    ).where(Patient.case_closed_at.is_(None))
+                    select(User, Patient)
+                    .join(Patient, Patient.id == User.active_patient_id)
+                    .where(Patient.case_closed_at.is_(None))
+                    .where(User.blocked_at.is_(None))
                 )
             ).all()
 
