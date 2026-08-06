@@ -24,3 +24,17 @@
 Токен для алёртов берётся из `/opt/pulsar/.env` (`PULSAR_BOT_TOKEN`,
 `OWNER_TELEGRAM_ID`), токен бота из `/opt/lordok_bot/.env`. В репозитории
 секретов нет.
+
+## Осторожно: каталог site на сервере общий
+
+`/opt/lordok_bot/site` это веб-корень nginx сразу для нескольких
+проектов: lor-dok.ru, kod-03.ru, meduwiki.ru, calc, docs, pulsar и
+n8n. В репозитории лежат только страницы ЛОРдока.
+
+`site/nginx.conf` намеренно не под версией: он описывает все сайты
+сразу, и деплой ЛОРдока перезаписывал бы конфигурацию соседей.
+Живой конфиг всегда можно достать из контейнера:
+
+```
+docker exec lordok_nginx cat /etc/nginx/conf.d/default.conf
+```
