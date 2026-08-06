@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+/* Шрифты локально, без запроса к Google на каждой загрузке.
+   PT Serif в заголовках: единственный из отобранных серифов, где
+   кириллица родная, а не пририсованная к латинице. Newsreader из
+   рекомендации базы кириллицы не имеет вовсе и молча падал бы в
+   системный шрифт. Source Sans 3 в тексте, цифрах и интерфейсе. */
+@import "@fontsource/pt-serif/cyrillic.css";
+@import "@fontsource/pt-serif/cyrillic-italic.css";
+@import "@fontsource/pt-serif/latin.css";
+@import "@fontsource/pt-serif/700.css";
+@import "@fontsource-variable/source-sans-3/index.css";
+
+/* ── Токены направления B: врачебная документальность ──
+   Контраст каждой пары посчитан, значения в комментариях. */
+@theme {
+  --font-display: "PT Serif", ui-serif, Georgia, serif;
+  --font-sans: "Source Sans 3 Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --color-paper: #FCFCFD;
+  --color-paper-2: #F4F6F8;
+  --color-ink: #101828;        /* 17.3 на бумаге */
+  --color-ink-2: #4B5565;      /* 7.6 на бумаге  */
+  --color-ink-3: #7A8494;      /* 4.1, только подписи от 18px */
+  --color-navy: #1F3864;       /* 11.3 на бумаге */
+  --color-navy-soft: #E7EDF6;
+  --color-line: #E2E5EA;
+  --color-signal: #B4472B;     /* 5.4 на бумаге, только тревога */
+  --color-signal-soft: #FBEDE8;
+  --color-ok: #15803D;         /* 4.9 на бумаге */
+  --color-ok-soft: #E9F5EC;
+  --color-watch: #A16207;      /* 4.6 на бумаге */
+  --color-watch-soft: #FBF2E2;
+
+  --text-step--1: 0.875rem;
+  --text-step-0: 1.0625rem;
+  --text-step-1: 1.25rem;
+  --text-step-2: 1.75rem;
+  --text-step-3: 2.375rem;
+  --text-step-4: 3.25rem;
+}
+
+/* Тёмная тема спроектирована отдельно, а не инверсией:
+   navy осветлён до 8.4, коралл до 6.8, зелёный до 10.4. */
+@layer base {
+  :root {
+    color-scheme: light dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-paper: #12161C;
+      --color-paper-2: #191E26;
+      --color-ink: #EDEFF2;
+      --color-ink-2: #A6AEB8;
+      --color-ink-3: #7E8794;
+      --color-navy: #8FB3E0;
+      --color-navy-soft: #1C2735;
+      --color-line: #2A3340;
+      --color-signal: #E8836A;
+      --color-signal-soft: #2A1D1A;
+      --color-ok: #4ADE80;
+      --color-ok-soft: #14251A;
+      --color-watch: #E0B24C;
+      --color-watch-soft: #26200F;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --color-paper: #12161C;
+    --color-paper-2: #191E26;
+    --color-ink: #EDEFF2;
+    --color-ink-2: #A6AEB8;
+    --color-ink-3: #7E8794;
+    --color-navy: #8FB3E0;
+    --color-navy-soft: #1C2735;
+    --color-line: #2A3340;
+    --color-signal: #E8836A;
+    --color-signal-soft: #2A1D1A;
+    --color-ok: #4ADE80;
+    --color-ok-soft: #14251A;
+    --color-watch: #E0B24C;
+    --color-watch-soft: #26200F;
+  }
+
+  :root[data-theme="light"] {
+    --color-paper: #FCFCFD;
+    --color-paper-2: #F4F6F8;
+    --color-ink: #101828;
+    --color-ink-2: #4B5565;
+    --color-ink-3: #7A8494;
+    --color-navy: #1F3864;
+    --color-navy-soft: #E7EDF6;
+    --color-line: #E2E5EA;
+    --color-signal: #B4472B;
+    --color-signal-soft: #FBEDE8;
+    --color-ok: #15803D;
+    --color-ok-soft: #E9F5EC;
+    --color-watch: #A16207;
+    --color-watch-soft: #FBF2E2;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-step-0);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    /* У PT Serif только 400 и 700: ставим 700 явно, иначе браузер
+       дорисовывает жирность сам и края букв плывут. */
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-navy);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Цифры в таблицах и карточках не должны прыгать при смене значения. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}

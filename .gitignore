@@ -58,3 +58,7 @@ backups/
 # kod-03.ru, meduwiki.ru, n8n и другие) и живёт только там.
 # В репозитории его быть не должно: деплой затирал бы соседей.
 site/nginx.conf
+
+# Сборка лендинга
+site-next/node_modules/
+site-next/dist/
