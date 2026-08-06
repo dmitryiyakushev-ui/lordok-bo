@@ -139,46 +139,58 @@
 }
 
 /* ── Движение ──────────────────────────────────────────────
-   Уровень Subtle из motion-базы: 350 мс, power1.out (в CSS это
-   cubic-bezier(0.25, 0.46, 0.45, 0.94)), сдвиг 12 px.
+   Токены взяты один в один с kod-03.ru, чтобы продукты ощущались
+   одной семьёй: 90 / 150 / 200 мс и одна кривая на всё.
 
-   Скрывать блоки умеет только класс .js-motion на <html>, который
-   ставит скрипт в head, и только если движение разрешено системой.
-   Без JS и при prefers-reduced-motion страница статична и полна. */
+   Уровень тот же: движение подтверждает действие и вход блока,
+   ничего не длится дольше 200 мс, библиотек нет.
+
+   Прятать блоки умеет только класс .js-motion на <html>, который
+   ставит скрипт в index.html и только если движение разрешено
+   системой. Без JS и при prefers-reduced-motion страница статична
+   и полна. */
+:root {
+  --motion-fast: 90ms;
+  --motion: 150ms;
+  --motion-slow: 200ms;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Вход блока: как panel-in в kod-03, прозрачность плюс 4 px. */
 .reveal {
   transition:
-    opacity 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    transform 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    opacity var(--motion) var(--ease-out),
+    transform var(--motion) var(--ease-out);
 }
 
 .js-motion .reveal:not(.is-in) {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(4px);
 }
 
-/* Строка выписки в сцене героя: тот же ритм, меньше сдвиг. */
+/* Строка выписки: тот же вход, только чуть быстрее. */
 .row-enter {
   transition:
-    opacity 240ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    transform 240ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    opacity var(--motion-fast) var(--ease-out),
+    transform var(--motion-fast) var(--ease-out);
 }
 
 .js-motion .row-enter:not(.is-in) {
   opacity: 0;
-  transform: translateY(6px);
+  transform: translateY(4px);
 }
 
-/* Отклик на нажатие: 1 px, только transform, без сдвига соседей. */
+/* Отклик на действие: подпись kod-03, сжатие на нажатии.
+   Только transform, соседние элементы не двигаются. */
 .press {
-  transition: transform 150ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.press:hover {
-  transform: translateY(-1px);
+  transition:
+    background-color var(--motion-fast) var(--ease-out),
+    color var(--motion-fast) var(--ease-out),
+    transform var(--motion-fast) var(--ease-out);
 }
 
 .press:active {
-  transform: translateY(0);
+  transform: scale(0.97);
 }
 
 /* Цифры в таблицах и карточках не должны прыгать при смене значения. */

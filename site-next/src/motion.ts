@@ -122,9 +122,14 @@ export function useCountUp(target: number, active: boolean) {
   return value
 }
 
-/** Тайминги сцены. Держим в одном месте, чтобы ритм был общий. */
+/**
+ * Тайминги сцены. Считаны от токенов kod-03: шаг между строками
+ * равен --motion-fast, пауза перед вердиктом --motion-slow, счёт
+ * балла укладывается в тот же шаг. Вся сцена около 0.7 секунды
+ * вместо прежних 1.4.
+ */
 export const STORY = {
-  rowStagger: 70,
-  verdictPause: 220,
-  countDuration: 300,
+  rowStagger: 90,
+  verdictPause: 200,
+  countDuration: 200,
 } as const
