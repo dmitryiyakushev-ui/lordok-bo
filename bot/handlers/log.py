@@ -75,6 +75,7 @@ from bot.triage.engine import run_triage
 from bot.triage.params import (
     RED_FLAG_VALUE_OVERRIDES,
     apply_value_maps,
+    compute_composite_score,
     get_params,
     get_red_flags,
 )
@@ -735,13 +736,9 @@ async def _process_triage(message: Message, state: FSMContext):
     elif nosology == "adenoid_hypertrophy":
         combined_symptoms["ah_age"] = age_group
 
-    # Composite score: only over numeric symptom parameters (exclude
-    # strings like age_group, exclude red flags so the score stays
-    # comparable across entries, and skip -1 = "can't assess" answers).
-    composite = sum(
-        v for v in symptom_values.values()
-        if isinstance(v, (int, float)) and v >= 0
-    )
+    # Балл тяжести: только выраженность симптомов, без сроков и
+    # красных флагов, чтобы записи оставались сравнимыми между собой.
+    composite = compute_composite_score(symptom_values)
 
     # Load prior entries for this patient (ascending for trend analysis).
     async with get_session() as session:

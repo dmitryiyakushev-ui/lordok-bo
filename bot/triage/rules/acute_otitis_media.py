@@ -105,6 +105,21 @@ def run_triage(
             "triage_message": "Умеренно-сильная боль в ухе с лихорадкой. Рекомендуем обратиться к врачу.",
         }
 
+    # --- Duration-Based Safety Net ---
+    # symptom_duration приходит в днях, а порог AAP это 48 часов.
+    # Раньше здесь стояло 48, то есть правило ждало 48 дней и при
+    # остром отите не срабатывало никогда.
+    #
+    # Проверка стоит перед наблюдательной тактикой намеренно: сама
+    # тактика и звучит как «наблюдаем 48–72 часа, дальше к врачу»,
+    # а в прежнем порядке лёгкий односторонний отит оставался зелёным
+    # хоть на десятый день.
+    if symptom_duration > 2 and trend != "improving":
+        return {
+            "triage_level": LEVEL_YELLOW,
+            "triage_message": "Отсутствие улучшения после 48 часов. Переоценка и консультация врача рекомендуются (AAP).",
+        }
+
     # --- Watchful Waiting Criteria (AAP 2013) ---
     # Age ≥2y + unilateral + mild pain + no otorrhea + no fever
     if (aom_age in ["2-5y", "6-14y", "15-44y", ">=45y"] and
@@ -115,13 +130,6 @@ def run_triage(
         return {
             "triage_level": LEVEL_GREEN,
             "triage_message": "Легкие односторонние симптомы, возраст ≥2 лет. Наблюдение допустимо (AAP). Если нет улучшения через 48–72 часа — запишитесь к врачу.",
-        }
-
-    # --- Duration-Based Safety Net ---
-    if symptom_duration > 48 and trend != "improving":
-        return {
-            "triage_level": LEVEL_YELLOW,
-            "triage_message": "Отсутствие улучшения после 48 часов. Переоценка и консультация врача рекомендуются (AAP).",
         }
 
     # --- Moderate pain or temp without discharge ---

@@ -56,6 +56,13 @@ from typing import Any
 #        discharge → smell
 # ══════════════════════════════════════════════════════════════════════
 ARS_PARAMS: list[dict[str, Any]] = [
+    {
+        "id": "ars_onset_days",
+        "label_ru": "Сколько дней уже длятся симптомы?",
+        "scale_type": "duration",
+        "first_visit_only": True,
+        "value_map": {0: 2, 1: 4, 2: 7, 3: 12},  # бакет → дни
+    },
     {"id": "ars_temp", "label_ru": "Какая у вас температура?", "scale_type": "temp"},
     {
         "id": "ars_fever_duration",
@@ -138,6 +145,13 @@ CRS_RED_FLAGS: list[dict[str, Any]] = [
 # Order: temp → cough → throat_pain → dysphagia → exudate → lymph
 # ══════════════════════════════════════════════════════════════════════
 TP_PARAMS: list[dict[str, Any]] = [
+    {
+        "id": "tp_onset_days",
+        "label_ru": "Сколько дней уже длятся симптомы?",
+        "scale_type": "duration",
+        "first_visit_only": True,
+        "value_map": {0: 2, 1: 4, 2: 7, 3: 12},  # бакет → дни
+    },
     {"id": "tp_temp", "label_ru": "Какая у вас температура?", "scale_type": "temp"},
     {
         "id": "tp_fever_duration",
@@ -177,6 +191,13 @@ TP_RED_FLAGS: list[dict[str, Any]] = [
 # Order: temp → malaise → ear_pain → hearing → discharge → bilateral
 # ══════════════════════════════════════════════════════════════════════
 AOM_PARAMS: list[dict[str, Any]] = [
+    {
+        "id": "aom_onset_days",
+        "label_ru": "Сколько дней уже длятся симптомы?",
+        "scale_type": "duration",
+        "first_visit_only": True,
+        "value_map": {0: 2, 1: 4, 2: 7, 3: 12},  # бакет → дни
+    },
     {"id": "aom_temp", "label_ru": "Какая у вас температура?", "scale_type": "temp"},
     {
         "id": "aom_fever_duration",
@@ -530,3 +551,24 @@ def apply_value_maps(
         if pid in mapped and mapped[pid] in vmap:
             mapped[pid] = vmap[mapped[pid]]
     return mapped
+
+
+# Параметры, которые измеряют срок, а не тяжесть, и потому в сумму
+# баллов не входят. После value_map они приходят в днях: экссудат
+# дольше полугода это 240, и в сумме симптомов такому числу не место.
+NON_SEVERITY_SUFFIXES = ("_onset_days", "_duration")
+
+
+def compute_composite_score(symptom_values: dict[str, Any]) -> int:
+    """Суммарный балл тяжести по ответам дневника.
+
+    Считаются только числовые ответы про выраженность симптомов.
+    Пропускаются строки (возрастная группа), сроки и ответы «сложно
+    оценить» (-1), чтобы балл оставался сравнимым между записями.
+    """
+    return sum(
+        v for k, v in symptom_values.items()
+        if isinstance(v, (int, float))
+        and v >= 0
+        and not k.endswith(NON_SEVERITY_SUFFIXES)
+    )

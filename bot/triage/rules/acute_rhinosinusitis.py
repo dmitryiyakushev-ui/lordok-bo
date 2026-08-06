@@ -124,7 +124,10 @@ def run_triage(
                 "triage_message": "Симптомы длятся более 10 дней, но улучшаются. Продолжайте текущее лечение.",
             }
 
-        if trend == "stable" or trend == "worsening":
+        # insufficient_data — это первая запись: динамики ещё нет.
+        # Раз симптомы идут больше 10 дней и об улучшении ничего не
+        # известно, безопасный ответ тот же, что при стабильной картине.
+        if trend in ("stable", "worsening", "worsening_3d", "insufficient_data"):
             return {
                 "triage_level": LEVEL_YELLOW,
                 "triage_message": "Симптомы продолжаются более 10 дней без улучшения — показано обследование у ЛОР-врача (AAO-HNS).",

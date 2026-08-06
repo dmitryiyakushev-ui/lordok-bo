@@ -106,6 +106,21 @@ def calculate_symptom_duration(
     return delta.days
 
 
+def reported_duration_days(symptoms: dict) -> int:
+    """Длительность болезни со слов пациента, в днях.
+
+    Вопрос «сколько дней уже длятся симптомы» задаётся при первом
+    заполнении случая и через value_map приходит сюда уже в днях.
+    Без него движок знал только, сколько дней человек ведёт дневник,
+    и первый визит всегда выглядел как первый день болезни.
+    """
+    values = [
+        v for k, v in symptoms.items()
+        if k.endswith("_onset_days") and isinstance(v, (int, float))
+    ]
+    return int(max(values)) if values else 0
+
+
 def get_last_n_entries(
     current_entry: SymptomEntry,
     all_entries: list[SymptomEntry],
@@ -549,12 +564,25 @@ def run_triage(
 
     handler = NOSOLOGY_HANDLERS[nosology]
 
-    # Step 3: Calculate symptom duration
+    # Step 3: Calculate symptom duration.
+    # Берём максимум из двух источников: сколько дней человек ведёт
+    # дневник и сколько дней, по его словам, длится болезнь. Первое не
+    # знает, что было до бота, второе спрашивается один раз за случай.
+    # Вопрос о длительности задаётся один раз за случай, поэтому на
+    # повторных заполнениях его берём из самой первой записи и
+    # прибавляем прожитые с тех пор дни.
     if user_history:
         earliest_entry = min(user_history, key=lambda e: e.recorded_at)
-        symptom_duration = calculate_symptom_duration(earliest_entry.recorded_at, now)
+        diary_duration = calculate_symptom_duration(earliest_entry.recorded_at, now)
+        onset_before_diary = reported_duration_days(earliest_entry.symptoms)
     else:
-        symptom_duration = 0
+        diary_duration = 0
+        onset_before_diary = 0
+
+    symptom_duration = max(
+        diary_duration + onset_before_diary,
+        reported_duration_days(symptom_entry.symptoms),
+    )
 
     # Step 4: Evaluate soft alarms in context
     if soft_alarms:
