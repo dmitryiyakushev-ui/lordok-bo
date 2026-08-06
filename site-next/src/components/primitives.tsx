@@ -62,7 +62,7 @@ export function ButtonLink({
   variant?: 'primary' | 'quiet'
 }) {
   const base =
-    'inline-flex items-center justify-center gap-2 px-6 min-h-12 text-[length:var(--text-step-0)] font-semibold transition-colors duration-200'
+    'press inline-flex items-center justify-center gap-2 px-6 min-h-12 text-[length:var(--text-step-0)] font-semibold transition-colors duration-200'
   const styles =
     variant === 'primary'
       ? 'bg-navy text-paper hover:bg-ink'

@@ -1,18 +1,20 @@
 import { TELEGRAM_URL, diaryExtract } from '../data'
-import { ButtonLink, Eyebrow, LevelChip, levelRule } from './primitives'
-
-const verdictLabel = {
-  ok: 'Наблюдаем',
-  watch: 'К врачу планово',
-  signal: 'К врачу сегодня',
-} as const
+import { useCountUp, useDiaryStory, useInView } from '../motion'
+import { ButtonLink, Eyebrow, LevelChip, levelRule, type Level } from './primitives'
 
 /**
- * Первый экран. Вместо мокапа чата показываем то, ради чего продукт
- * существует: выписку из дневника, где видно, как неделя доходит до
- * рекомендации.
+ * Первый экран. Заголовок, текст и кнопки не анимируются: между
+ * человеком и переходом в бот ничего стоять не должно.
+ *
+ * Двигается только выписка, и только один раз. За полторы секунды она
+ * проигрывает неделю: строки по одной, балл набегает, левая полоса
+ * меняет цвет по дням, в конце появляется вердикт. Это единственное
+ * место, где движение объясняет продукт, а не украшает страницу.
  */
 export function Hero() {
+  const { ref, inView } = useInView<HTMLElement>()
+  const { shown, verdict } = useDiaryStory(diaryExtract.length, inView)
+
   return (
     <header className="px-5 sm:px-8">
       <div className="mx-auto max-w-5xl pt-10 pb-14 sm:pt-16 sm:pb-20 lg:pb-28">
@@ -44,8 +46,7 @@ export function Hero() {
             </p>
           </div>
 
-          {/* Специмен выписки */}
-          <figure className="m-0 border border-line bg-paper-2">
+          <figure ref={ref} className="m-0 border border-line bg-paper-2">
             <figcaption className="flex items-baseline justify-between border-b border-line px-4 py-3">
               <span className="font-display text-[length:var(--text-step-0)] font-semibold">
                 Выписка за неделю
@@ -56,28 +57,17 @@ export function Hero() {
             </figcaption>
 
             <ul className="divide-y divide-line">
-              {diaryExtract.map((row) => (
-                <li
-                  key={row.day}
-                  className={`border-l-2 ${levelRule(row.verdict)} px-4 py-3`}
-                >
-                  <div className="flex items-baseline justify-between gap-3">
-                    <span className="tabular text-[length:var(--text-step--1)] text-ink-2">
-                      {row.day}
-                    </span>
-                    <span className="tabular text-[length:var(--text-step--1)] text-ink-3">
-                      балл {row.score}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-[length:var(--text-step--1)] leading-snug">
-                    {row.note}
-                  </p>
-                </li>
+              {diaryExtract.map((row, i) => (
+                <DiaryRow key={row.day} {...row} shown={i < shown} />
               ))}
             </ul>
 
-            <div className="border-t border-line px-4 py-3">
-              <LevelChip level="signal">{verdictLabel.signal}</LevelChip>
+            <div
+              className={`row-enter border-t border-line px-4 py-3 ${
+                verdict ? 'is-in' : ''
+              }`}
+            >
+              <LevelChip level="signal">К врачу сегодня</LevelChip>
               <p className="mt-2 text-[length:var(--text-step--1)] leading-snug text-ink-2">
                 Пятые сутки без улучшения плюс подъём температуры. Это повод
                 показаться ЛОР-врачу в ближайшие сутки.
@@ -87,5 +77,39 @@ export function Hero() {
         </div>
       </div>
     </header>
+  )
+}
+
+function DiaryRow({
+  day,
+  score,
+  verdict,
+  note,
+  shown,
+}: {
+  day: string
+  score: number
+  verdict: Level
+  note: string
+  shown: boolean
+}) {
+  const value = useCountUp(score, shown)
+
+  return (
+    <li
+      className={`row-enter border-l-2 ${levelRule(verdict)} px-4 py-3 ${
+        shown ? 'is-in' : ''
+      }`}
+    >
+      <div className="flex items-baseline justify-between gap-3">
+        <span className="tabular text-[length:var(--text-step--1)] text-ink-2">
+          {day}
+        </span>
+        <span className="tabular text-[length:var(--text-step--1)] text-ink-3">
+          балл {value}
+        </span>
+      </div>
+      <p className="mt-1 text-[length:var(--text-step--1)] leading-snug">{note}</p>
+    </li>
   )
 }

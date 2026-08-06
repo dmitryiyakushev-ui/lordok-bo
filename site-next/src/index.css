@@ -138,6 +138,49 @@
   }
 }
 
+/* ── Движение ──────────────────────────────────────────────
+   Уровень Subtle из motion-базы: 350 мс, power1.out (в CSS это
+   cubic-bezier(0.25, 0.46, 0.45, 0.94)), сдвиг 12 px.
+
+   Скрывать блоки умеет только класс .js-motion на <html>, который
+   ставит скрипт в head, и только если движение разрешено системой.
+   Без JS и при prefers-reduced-motion страница статична и полна. */
+.reveal {
+  transition:
+    opacity 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.js-motion .reveal:not(.is-in) {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+/* Строка выписки в сцене героя: тот же ритм, меньше сдвиг. */
+.row-enter {
+  transition:
+    opacity 240ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 240ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.js-motion .row-enter:not(.is-in) {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+/* Отклик на нажатие: 1 px, только transform, без сдвига соседей. */
+.press {
+  transition: transform 150ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.press:hover {
+  transform: translateY(-1px);
+}
+
+.press:active {
+  transform: translateY(0);
+}
+
 /* Цифры в таблицах и карточках не должны прыгать при смене значения. */
 .tabular {
   font-variant-numeric: tabular-nums;

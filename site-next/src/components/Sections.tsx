@@ -7,6 +7,7 @@ import {
   triageStates,
 } from '../data'
 import { ButtonLink, LevelChip, Section } from './primitives'
+import { Reveal } from './Reveal'
 
 export function Problem() {
   return (
@@ -17,14 +18,14 @@ export function Problem() {
       lede="Мы провели 18 глубинных интервью с пациентами и три с ЛОР-врачами. Три вещи повторялись почти у всех."
     >
       <div className="mt-10 grid gap-px bg-line sm:grid-cols-3">
-        {problems.map((p) => (
-          <article key={p.title} className="bg-paper p-6">
+        {problems.map((p, i) => (
+          <Reveal as="article" key={p.title} index={i} className="bg-paper p-6">
             <h3 className="text-[length:var(--text-step-1)]">{p.title}</h3>
             <p className="mt-3 text-ink-2">{p.body}</p>
             <p className="mt-4 border-t border-line pt-3 text-[length:var(--text-step--1)] text-ink-3">
               {p.source}
             </p>
-          </article>
+          </Reveal>
         ))}
       </div>
     </Section>
@@ -39,14 +40,14 @@ export function HowItWorks() {
       title="Четыре шага, тридцать секунд в день"
     >
       <ol className="mt-10 grid gap-px bg-line sm:grid-cols-2">
-        {steps.map((s) => (
-          <li key={s.n} className="bg-paper p-6 sm:p-8">
+        {steps.map((s, i) => (
+          <Reveal as="li" key={s.n} index={i} className="bg-paper p-6 sm:p-8">
             <span className="font-display text-[length:var(--text-step-2)] text-ink-3 tabular">
               {s.n}
             </span>
             <h3 className="mt-2 text-[length:var(--text-step-1)]">{s.title}</h3>
             <p className="mt-3 max-w-md text-ink-2">{s.body}</p>
-          </li>
+          </Reveal>
         ))}
       </ol>
     </Section>

@@ -27,6 +27,16 @@
   </head>
   <body>
     <div id="root"></div>
+    <!--
+      Класс ставится до первой отрисовки, поэтому блоки не успевают
+      мигнуть. Нет скрипта или система просит убрать анимацию: класса
+      нет, страница просто статична.
+    -->
+    <script>
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('js-motion')
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
