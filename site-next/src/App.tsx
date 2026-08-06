@@ -1,5 +1,6 @@
 import { FinalCta, Footer, Nav } from './components/Chrome'
 import { Hero } from './components/Hero'
+import { WeekChart } from './components/WeekChart'
 import {
   Author,
   ForDoctors,
@@ -16,6 +17,7 @@ export default function App() {
       <main id="main">
         <Hero />
         <Problem />
+        <WeekChart />
         <HowItWorks />
         <Triage />
         <ForDoctors />

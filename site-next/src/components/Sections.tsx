@@ -8,6 +8,7 @@ import {
 } from '../data'
 import { ButtonLink, LevelChip, Section } from './primitives'
 import { Reveal } from './Reveal'
+import { useInView } from '../motion'
 
 export function Problem() {
   return (
@@ -41,13 +42,7 @@ export function HowItWorks() {
     >
       <ol className="mt-10 grid gap-px bg-line sm:grid-cols-2">
         {steps.map((s, i) => (
-          <Reveal as="li" key={s.n} index={i} className="bg-paper p-6 sm:p-8">
-            <span className="font-display text-[length:var(--text-step-2)] text-ink-3 tabular">
-              {s.n}
-            </span>
-            <h3 className="mt-2 text-[length:var(--text-step-1)]">{s.title}</h3>
-            <p className="mt-3 max-w-md text-ink-2">{s.body}</p>
-          </Reveal>
+          <StepCard key={s.n} {...s} index={i} />
         ))}
       </ol>
     </Section>
@@ -161,5 +156,41 @@ export function Author() {
         </p>
       </div>
     </Section>
+  )
+}
+
+/**
+ * Шаг процесса. Номер загорается, когда карточка проходит через экран:
+ * так по странице видно, где ты в последовательности.
+ */
+function StepCard({
+  n,
+  title,
+  body,
+  index,
+}: {
+  n: string
+  title: string
+  body: string
+  index: number
+}) {
+  const { ref, inView } = useInView<HTMLLIElement>()
+
+  return (
+    <li
+      ref={ref}
+      className={`reveal ${inView ? 'is-in' : ''} bg-paper p-6 sm:p-8`}
+      style={{ transitionDelay: `${index * 40}ms` }}
+    >
+      <span
+        className={`font-display text-[length:var(--text-step-2)] tabular transition-colors duration-300 ${
+          inView ? 'text-navy' : 'text-ink-3'
+        }`}
+      >
+        {n}
+      </span>
+      <h3 className="mt-2 text-[length:var(--text-step-1)]">{title}</h3>
+      <p className="mt-3 max-w-md text-ink-2">{body}</p>
+    </li>
   )
 }
