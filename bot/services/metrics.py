@@ -20,7 +20,7 @@ Definitions used here (they are the ones the MVP is judged by):
 from collections import defaultdict
 from datetime import date, datetime, timezone
 
-from sqlalchemy import Date, cast, func, select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.models.event import BotEvent
@@ -36,17 +36,21 @@ from bot.services.funnel_math import (
 
 
 async def _entry_days_by_user(session: AsyncSession) -> dict[int, set[date]]:
-    """user_id -> set of UTC dates that have at least one diary entry."""
+    """user_id -> set of UTC dates that have at least one diary entry.
+
+    Дата берётся из отметки времени уже в Python: приведение типов на
+    стороне базы у Postgres и SQLite ведёт себя по-разному, а объём
+    записей дневника позволяет не экономить.
+    """
     rows = (
         await session.execute(
-            select(SymptomEntry.user_id, cast(SymptomEntry.recorded_at, Date))
-            .distinct()
+            select(SymptomEntry.user_id, SymptomEntry.recorded_at)
         )
     ).all()
 
     days: dict[int, set[date]] = defaultdict(set)
-    for user_id, day in rows:
-        days[user_id].add(day)
+    for user_id, recorded_at in rows:
+        days[user_id].add(recorded_at.date())
     return days
 
 
