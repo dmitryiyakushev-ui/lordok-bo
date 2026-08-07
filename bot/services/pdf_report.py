@@ -29,6 +29,8 @@ from reportlab.platypus import (
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
+from bot.triage.red_flags import red_flag_label
+
 logger = logging.getLogger(__name__)
 
 
@@ -213,6 +215,15 @@ def _build_styles():
         spaceBefore=6 * mm,
         spaceAfter=3 * mm,
     ))
+    styles.add(ParagraphStyle(
+        "CellRu",
+        parent=styles["Normal"],
+        fontName=font_name,
+        fontSize=9,
+        leading=11,
+        textColor=COLOR_DARK_BLUE,
+    ))
+
     styles.add(ParagraphStyle(
         "BodyRu",
         parent=styles["Normal"],
@@ -455,9 +466,12 @@ async def generate_pdf_report(
             triage_label, _ = TRIAGE_LABELS.get(triage_lv, ("—", colors.gray))
 
             rf = entry.get("red_flags", [])
-            rf_str = ", ".join(rf) if rf else "—"
+            rf_str = ", ".join(red_flag_label(f) for f in rf) if rf else "—"
 
-            table_data.append([dt_str, score, triage_label, rf_str])
+            table_data.append([
+                dt_str, score, triage_label,
+                Paragraph(rf_str, styles["CellRu"]),
+            ])
 
         col_widths = [28 * mm, 18 * mm, 40 * mm, 80 * mm]
         t = Table(table_data, colWidths=col_widths, repeatRows=1)
@@ -467,6 +481,7 @@ async def generate_pdf_report(
             ("FONTNAME", (0, 0), (-1, -1), font_name),
             ("FONTNAME", (0, 0), (-1, 0), font_bold),
             ("FONTSIZE", (0, 0), (-1, -1), 9),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
             ("BACKGROUND", (0, 0), (-1, 0), COLOR_LIGHT_BLUE),
             ("TEXTCOLOR", (0, 0), (-1, 0), COLOR_DARK_BLUE),
             ("GRID", (0, 0), (-1, -1), 0.4, colors.lightgrey),
@@ -603,7 +618,7 @@ async def generate_pdf_report(
             rf = entry.get("red_flags", [])
             if rf:
                 story.append(Spacer(1, 1 * mm))
-                rf_str = ", ".join(rf)
+                rf_str = ", ".join(red_flag_label(f) for f in rf)
                 story.append(Paragraph(
                     f'<b>Тревожные признаки:</b> {rf_str}',
                     styles["BodyRu"],
@@ -635,11 +650,18 @@ async def generate_pdf_report(
             "centor": "Centor / McIsaac",
             "feverpain": "FeverPAIN",
         }
+        # Ключи приходят из bot/services/scales.py. Прежний словарь их
+        # не знал, поэтому в отчёт попадали сырые значения вроде
+        # yellow_test_or_ab.
         ACTION_LABELS = {
-            "no_abx": "Антибиотики не показаны",
-            "delayed_abx": "Отложенная тактика",
-            "consider_abx": "Рассмотреть антибиотики",
-            "abx_recommended": "Антибиотики рекомендованы",
+            "green_no_ab": "Антибиотики не показаны",
+            "yellow_test": "Показан экспресс-тест на стрептококк",
+            "yellow_delayed_or_test": "Отложенная тактика или тест",
+            "yellow_test_or_ab": "Тест или антибиотики по решению врача",
+            "yellow_or_red_ab": "Антибиотики рекомендованы",
+            "green": "Наблюдение",
+            "yellow": "Требует внимания врача",
+            "red": "Срочная консультация",
         }
 
         scale_header = ["Дата", "Шкала", "Баллы", "Рекомендация"]

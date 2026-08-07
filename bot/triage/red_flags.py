@@ -49,6 +49,42 @@ SOFT_ALARMS = frozenset({
     RF_RAPID_DETERIORATION,
 })
 
+# Короткие подписи для таблиц и отчёта врачу. Полные формулировки для
+# пациента лежат ниже, в get_red_flag_message; здесь именно ярлык,
+# который влезает в ячейку и читается с листа.
+RED_FLAG_LABELS: dict[str, str] = {
+    RF_PERIORBITAL_EDEMA: "отёк вокруг глаза",
+    RF_VISUAL_DISTURBANCE: "нарушение зрения",
+    RF_MENINGEAL_SIGNS: "менингеальные признаки",
+    RF_ALTERED_CONSCIOUSNESS: "спутанность сознания",
+    RF_MASTOIDITIS: "признаки мастоидита",
+    RF_FACIAL_NERVE_PALSY: "асимметрия лица",
+    RF_DYSPHAGIA_SEVERE: "невозможность глотать",
+    RF_TRISMUS: "тризм",
+    RF_STRIDOR: "стридор",
+    RF_HIGH_FEVER: "температура выше 39",
+    RF_RAPID_DETERIORATION: "резкое ухудшение за сутки",
+    # Признаки, которые читают отдельные правила нозологий.
+    "postauricular_swelling": "припухлость за ухом",
+    "protruding_pinna": "оттопыренная ушная раковина",
+    "neck_stiffness": "ригидность шеи",
+    "severe_headache": "резкая головная боль",
+    "uvular_deviation": "смещение язычка",
+    "drooling": "слюнотечение",
+    "neck_swelling": "отёк шеи",
+    "facial_asymmetry": "асимметрия лица",
+    "bloody_discharge": "кровянистое отделяемое",
+    "unilateral_symptoms": "односторонние симптомы",
+    "failure_to_thrive": "отставание в развитии",
+    "behavioral_regression": "регресс поведения",
+    "ah_apnea": "остановки дыхания во сне",
+}
+
+
+def red_flag_label(red_flag_id: str) -> str:
+    """Короткая подпись флага. Незнакомый ключ отдаём как есть."""
+    return RED_FLAG_LABELS.get(red_flag_id, red_flag_id)
+
 
 def check_universal_red_flags(symptoms: dict) -> tuple[list[str], list[str]]:
     """
